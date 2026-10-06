@@ -1,2050 +1,475 @@
-<title>Bitácora de Campo</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#24292f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Registros">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Registros</title>
 <style>
-:root{
-  --ground:#ECEFF1;--surface:#FFFFFF;--surface-2:#F5F7F8;--ink:#14212B;--ink-2:#3B4955;--muted:#5E6D79;--line:#D3DAE0;--line-2:#E4E9ED;
-  --primary:#1B3F63;--primary-ink:#FFFFFF;--primary-soft:#E0E9F2;
-  --accent:#E8A317;--accent-ink:#1C1500;
-  --nav-bg:#12304D;--nav-ink:#C7D5E2;--nav-ink-strong:#FFFFFF;--nav-active:rgba(255,255,255,.09);
-  --t-general:#3A6EA5;--t-labor:#2F7D4F;--t-stock:#B4541C;--t-tx:#6B4C9A;
-  --ok:#2A7148;--ok-soft:#E1F0E6;--warn:#8F5B00;--warn-soft:#FAEFD6;--bad:#B3261E;--bad-soft:#F8E1DF;
-  --focus:#2F6FB0;--shadow:0 8px 28px rgba(12,24,36,.18);
-  --r:8px;--r-sm:6px;
-  --f-display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
-  --f-body:"Barlow",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
-  --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Consolas,monospace;
-  color-scheme:light;
-}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --ground:#0D161E;--surface:#15212B;--surface-2:#1A2833;--ink:#E3EAF0;--ink-2:#B9C6D0;--muted:#8B9BA7;--line:#2B3B48;--line-2:#22313C;
-  --primary:#8CB6E0;--primary-ink:#0D161E;--primary-soft:#1D3147;--accent:#F0B429;--accent-ink:#1C1500;
-  --nav-bg:#0A131A;--nav-ink:#9FB2C2;--nav-ink-strong:#FFFFFF;--nav-active:rgba(255,255,255,.07);
-  --t-general:#80AAD8;--t-labor:#6DBD8B;--t-stock:#E38D58;--t-tx:#AE90DA;
-  --ok:#74C495;--ok-soft:#16301F;--warn:#E8B45A;--warn-soft:#33270F;--bad:#F29389;--bad-soft:#3A1C1A;
-  --focus:#8CB6E0;--shadow:0 8px 28px rgba(0,0,0,.5);color-scheme:dark;
-}}
-:root[data-theme="dark"]{
-  --ground:#0D161E;--surface:#15212B;--surface-2:#1A2833;--ink:#E3EAF0;--ink-2:#B9C6D0;--muted:#8B9BA7;--line:#2B3B48;--line-2:#22313C;
-  --primary:#8CB6E0;--primary-ink:#0D161E;--primary-soft:#1D3147;--accent:#F0B429;--accent-ink:#1C1500;
-  --nav-bg:#0A131A;--nav-ink:#9FB2C2;--nav-ink-strong:#FFFFFF;--nav-active:rgba(255,255,255,.07);
-  --t-general:#80AAD8;--t-labor:#6DBD8B;--t-stock:#E38D58;--t-tx:#AE90DA;
-  --ok:#74C495;--ok-soft:#16301F;--warn:#E8B45A;--warn-soft:#33270F;--bad:#F29389;--bad-soft:#3A1C1A;
-  --focus:#8CB6E0;--shadow:0 8px 28px rgba(0,0,0,.5);color-scheme:dark;
-}
-*{box-sizing:border-box}
-html,body{height:100%}
-body{background:var(--ground);color:var(--ink);font:15px/1.5 var(--f-body);-webkit-font-smoothing:antialiased}
-a{color:var(--primary)}
-button,input,select,textarea{font:inherit;color:inherit}
-:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
-.ic{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.num{font-variant-numeric:tabular-nums}
-.mono{font-family:var(--f-mono);font-size:.92em}
-.muted{color:var(--muted)}
-.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-
-/* ---------- Estructura ---------- */
-.shell{display:grid;grid-template-columns:236px minmax(0,1fr);min-height:100%}
-.nav{background:var(--nav-bg);color:var(--nav-ink);display:flex;flex-direction:column;gap:2px;padding:20px 12px;position:sticky;top:0;height:100vh;height:100dvh}
-.brand{display:flex;align-items:center;gap:10px;padding:4px 8px 18px;color:var(--nav-ink-strong);text-decoration:none}
-.brand svg{width:34px;height:34px;flex:none}
-.brand b{font:700 21px/1 var(--f-display);letter-spacing:.02em;display:block}
-.brand small{font:500 11px/1.2 var(--f-body);color:var(--nav-ink);letter-spacing:.06em;text-transform:uppercase}
-.nav a.tab{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--r-sm);color:var(--nav-ink);text-decoration:none;font-weight:600}
-.nav a.tab:hover{color:var(--nav-ink-strong);background:var(--nav-active)}
-.nav a.tab[aria-current="page"]{color:var(--nav-ink-strong);background:var(--nav-active)}
-.nav a.tab[aria-current="page"] .ic{color:var(--accent)}
-.nav-foot{margin-top:auto;display:grid;gap:8px;padding:8px}
-.sync-pill{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;padding:6px 10px;border-radius:999px;background:var(--nav-active);color:var(--nav-ink-strong);border:0;cursor:pointer;text-align:left}
-.sync-pill .dot{width:8px;height:8px;border-radius:50%;background:#8BA0B3;flex:none}
-.sync-pill[data-state="ok"] .dot{background:#5CC08A}
-.sync-pill[data-state="pending"] .dot{background:#F0B429}
-.sync-pill[data-state="offline"] .dot{background:#F28B82}
-main{min-width:0}
-.topbar{display:none}
-@media (max-width:899px){
-  .shell{grid-template-columns:minmax(0,1fr)}
-  .nav{position:fixed;left:0;right:0;bottom:0;top:auto;height:auto;flex-direction:row;justify-content:space-around;padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px));z-index:30;gap:0}
-  .nav .brand,.nav .nav-foot{display:none}
-  .nav a.tab{flex:1;flex-direction:column;gap:2px;font-size:11px;padding:6px 2px;align-items:center;font-weight:600}
-  .nav a.tab .ic{width:22px;height:22px}
-  main{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
-  .topbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 16px;background:var(--nav-bg);color:var(--nav-ink-strong);position:sticky;top:env(safe-area-inset-top,0px);z-index:20}
-  .topbar .brand{padding:0}
-  .topbar .brand svg{width:28px;height:28px}
-  .topbar .brand b{font-size:18px}
-}
-
-/* ---------- Página ---------- */
-.page{max-width:1000px;margin:0 auto;padding-inline:16px;padding-block:20px 48px;display:grid;gap:20px}
-@media (min-width:900px){.page{padding-inline:32px;padding-block:28px 64px}}
-.page.narrow{max-width:760px}
-.page-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px}
-.page-head > div:first-child{min-width:0;flex:1 1 280px}
-.eyebrow{font:600 12px/1.2 var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
-.eyebrow a{color:inherit}
-h1{font:600 32px/1.05 var(--f-display);letter-spacing:.01em;margin:0;text-wrap:balance;overflow-wrap:anywhere}
-h2{font:600 19px/1.15 var(--f-display);letter-spacing:.05em;text-transform:uppercase;margin:0;color:var(--ink-2)}
-h3{font:600 16px/1.3 var(--f-body);margin:0}
-p{margin:0}
-.section{display:grid;gap:10px}
-.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:grid;gap:10px;min-width:0}
-.grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-@media (max-width:640px){.grid-2,.grid-3{grid-template-columns:minmax(0,1fr)}}
-.banner{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:var(--r);background:var(--warn-soft);color:var(--ink);font-size:14px}
-.banner .ic{color:var(--warn);margin-top:2px}
-.banner.info{background:var(--primary-soft)}
-.banner.info .ic{color:var(--primary)}
-
-/* ---------- Controles ---------- */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:40px;padding:0 14px;border-radius:var(--r-sm);border:1px solid var(--line);background:var(--surface);color:var(--ink);font-weight:600;font-size:14.5px;text-decoration:none;cursor:pointer;white-space:nowrap}
-.btn:hover{border-color:var(--muted)}
-.btn.primary{background:var(--primary);border-color:var(--primary);color:var(--primary-ink)}
-.btn.accent{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
-.btn.danger{color:var(--bad);border-color:var(--bad);background:transparent}
-.btn.ghost{background:transparent}
-.btn.sm{min-height:34px;padding:0 10px;font-size:13.5px}
-.btn[disabled]{opacity:.55;cursor:not-allowed}
-.icon-btn{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:var(--r-sm);border:0;background:transparent;color:var(--muted);cursor:pointer}
-.icon-btn:hover{background:var(--surface-2);color:var(--ink)}
-.chips{display:flex;flex-wrap:wrap;gap:6px}
-.chip{display:inline-flex;align-items:center;gap:6px;min-height:32px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink-2);font-size:13.5px;font-weight:600;cursor:pointer;text-decoration:none}
-.chip .sw{width:9px;height:9px;border-radius:2px;background:var(--tc,var(--muted))}
-.chip[aria-pressed="true"],.chip.on{background:var(--ink);border-color:var(--ink);color:var(--surface)}
-.field{display:grid;gap:5px;min-width:0}
-.field > span,.lbl{font-size:13px;font-weight:600;color:var(--ink-2)}
-.field .hint{font-size:12.5px;color:var(--muted)}
-input[type=text],input[type=search],input[type=email],input:not([type]),input[type=date],input[type=datetime-local],select,textarea{width:100%;min-height:42px;padding:8px 10px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface);color:var(--ink)}
-textarea{min-height:96px;resize:vertical;line-height:1.45}
-input:focus,select:focus,textarea:focus{outline:2px solid var(--focus);outline-offset:0;border-color:transparent}
-.seg{display:inline-flex;border:1px solid var(--line);border-radius:var(--r-sm);overflow:hidden;background:var(--surface)}
-.seg button{border:0;background:transparent;padding:0 12px;min-height:38px;font-weight:600;font-size:14px;color:var(--ink-2);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
-.seg button + button{border-left:1px solid var(--line)}
-.seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
-.form{display:grid;gap:16px}
-.form-actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;padding-top:4px}
-fieldset.group{border:1px solid var(--line);border-radius:var(--r);padding:12px;margin:0;display:grid;gap:10px;background:var(--surface-2)}
-fieldset.group legend{font:600 13px var(--f-body);color:var(--ink-2);padding:0 6px}
-.type-pick{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
-@media (max-width:640px){.type-pick{grid-template-columns:repeat(2,minmax(0,1fr))}}
-.type-pick button{display:grid;justify-items:center;gap:6px;padding:12px 6px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);cursor:pointer;font-weight:600;font-size:14px;color:var(--ink)}
-.type-pick button .ic{width:24px;height:24px;color:var(--tc)}
-.type-pick button[aria-pressed="true"]{border:2px solid var(--tc);background:color-mix(in srgb,var(--tc) 11%,var(--surface));padding:11px 5px}
-.line{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-sm);padding:10px;display:grid;gap:8px}
-.line-head{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
-.line-grid{display:grid;gap:8px}
-.line-grid.labor{grid-template-columns:minmax(0,1.2fr) minmax(0,1.5fr) 84px}
-.line-grid.stock{grid-template-columns:minmax(0,1.5fr) auto 110px minmax(0,1fr);align-items:end}
-@media (max-width:640px){.line-grid.labor{grid-template-columns:minmax(0,1fr) 84px}.line-grid.labor .task{grid-column:1 / -1;order:3}.line-grid.stock{grid-template-columns:minmax(0,1fr) 110px}.line-grid.stock .item,.line-grid.stock .resp{grid-column:1 / -1}}
-.tag{display:inline-flex;align-items:center;gap:4px;padding:3px 4px 3px 9px;border-radius:999px;background:var(--primary-soft);color:var(--ink);font-size:13.5px;font-weight:600}
-.tag button{border:0;background:transparent;color:var(--muted);cursor:pointer;display:grid;place-items:center;width:22px;height:22px;border-radius:50%}
-.tag.sugg{background:transparent;border:1px dashed var(--line);color:var(--muted);padding:3px 10px;cursor:pointer}
-.tags-line{color:var(--primary);font-size:13.5px;font-weight:600;overflow-wrap:anywhere}
-.loc-box{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface)}
-.loc-box .ic{color:var(--muted)}
-.loc-box.has .ic{color:var(--ok)}
-.att-list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
-.att{display:grid;grid-template-columns:84px minmax(0,1fr) auto;gap:10px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-sm);padding:8px}
-.att img,.thumb{width:84px;height:84px;object-fit:cover;border-radius:4px;background:var(--line-2)}
-.att textarea{min-height:60px}
-.att.file{grid-template-columns:40px minmax(0,1fr) auto;align-items:center}
-.file-ic{width:40px;height:40px;border-radius:6px;display:grid;place-items:center;background:var(--primary-soft);color:var(--primary)}
-
-/* ---------- Estados ---------- */
-.pill{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap;letter-spacing:.02em}
-.pill.ACTIVE{background:var(--ok-soft);color:var(--ok)}
-.pill.PLANNED{background:var(--primary-soft);color:var(--primary)}
-.pill.ON_HOLD{background:var(--warn-soft);color:var(--warn)}
-.pill.CLOSED{background:var(--surface-2);color:var(--muted);border:1px solid var(--line)}
-.pill.pend{background:var(--warn-soft);color:var(--warn)}
-.pill.role{background:var(--primary-soft);color:var(--primary)}
-.pill .ic{width:13px;height:13px}
-
-/* ---------- Tarjetas de proyecto y KPIs ---------- */
-.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-@media (max-width:760px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
-.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;display:grid;gap:2px}
-.kpi b{font:600 34px/1 var(--f-display);font-variant-numeric:tabular-nums;color:var(--ink)}
-.kpi span{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-.kpi small{font-size:12.5px;color:var(--muted)}
-.plist{display:grid;gap:10px}
-.pcard{display:grid;gap:6px;padding:14px 16px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);text-decoration:none;color:inherit}
-.pcard:hover{border-color:var(--muted)}
-.pcard .row{display:flex;align-items:center;gap:10px;justify-content:space-between;flex-wrap:wrap}
-.pcard h3{font:600 20px/1.15 var(--f-display);letter-spacing:.01em}
-.meta{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:13px;color:var(--muted);align-items:center}
-.meta span{display:inline-flex;align-items:center;gap:4px}
-.meta .ic{width:14px;height:14px}
-.dl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:6px 16px;margin:0;font-size:14.5px}
-.dl dt{color:var(--muted);font-size:13px;padding-top:1px}
-.dl dd{margin:0;overflow-wrap:anywhere}
-.table-wrap{overflow-x:auto}
-table.t{width:100%;border-collapse:collapse;font-size:14px}
-table.t th{text-align:left;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:6px 8px;border-bottom:1px solid var(--line)}
-table.t td{padding:7px 8px;border-bottom:1px solid var(--line-2);vertical-align:top}
-table.t .r{text-align:right;font-variant-numeric:tabular-nums}
-
-/* ---------- Línea de tiempo ---------- */
-.day{display:grid;gap:2px}
-.day-head{display:flex;align-items:baseline;gap:12px;padding-block:14px 6px;border-bottom:1px solid var(--line);flex-wrap:wrap}
-.day-date{font:600 18px/1 var(--f-display);text-transform:uppercase;letter-spacing:.05em}
-.day-meta{font-size:13px;color:var(--muted)}
-.tl{list-style:none;margin:0;padding:0;position:relative}
-.tl::before{content:"";position:absolute;left:61px;top:0;bottom:0;width:2px;background:var(--line)}
-.tl-item{display:grid;grid-template-columns:48px 28px minmax(0,1fr);align-items:start;padding-block:6px}
-.tl-time{font-family:var(--f-mono);font-size:13px;color:var(--ink-2);text-align:right;padding-top:13px}
-.tl-node{width:12px;height:12px;border-radius:50%;background:var(--tc);box-shadow:0 0 0 3px var(--ground);margin:17px auto 0;position:relative;z-index:1}
-.tl-body{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;padding:10px 12px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);color:inherit;text-decoration:none}
-.tl-body:hover{border-color:var(--muted)}
-.tl-main{display:grid;gap:4px;min-width:0}
-.tl-type{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
-.tl-type .ic{width:15px;height:15px;color:var(--tc)}
-.tl-type .folio{margin-left:auto;font-family:var(--f-mono);font-weight:500;letter-spacing:0;color:var(--muted)}
-.tl-sum{font-weight:700}
-.tl-text{color:var(--ink);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
-.tl-body .thumb{width:72px;height:72px}
-.empty{display:grid;justify-items:center;gap:8px;text-align:center;padding:36px 16px;color:var(--muted);border:1px dashed var(--line);border-radius:var(--r)}
-.empty .ic{width:36px;height:36px;stroke-width:1.5}
-.empty b{color:var(--ink);font-size:16px}
-
-/* ---------- Detalle de registro ---------- */
-.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
-.photo{margin:0;display:grid;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;cursor:zoom-in;padding:0;text-align:left}
-.photo img{width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--line-2);display:block}
-.photo figcaption{font-size:13px;padding:0 8px 8px;color:var(--ink-2)}
-.amount{font:600 34px/1 var(--f-display);font-variant-numeric:tabular-nums}
-.amount.in{color:var(--ok)}
-.amount.out{color:var(--bad)}
-.comment{display:grid;gap:2px;padding-block:8px;border-bottom:1px solid var(--line-2)}
-.comment:last-of-type{border-bottom:0}
-.comment b{font-size:14px}
-.comment time{font-size:12.5px;color:var(--muted)}
-.dir{display:inline-flex;align-items:center;gap:4px;font-weight:700;font-size:13px}
-.dir.IN{color:var(--ok)}
-.dir.OUT{color:var(--bad)}
-
-/* ---------- Gráfico ---------- */
-.chart{margin:0;min-height:190px}
-.chart svg{display:block;width:100%;height:auto;overflow:visible}
-.chart .grid{stroke:var(--line-2);stroke-width:1}
-.chart .base{stroke:var(--line);stroke-width:1}
-.chart .axis{fill:var(--muted);font:500 11px var(--f-mono)}
-.chart .val{fill:var(--ink);font:600 12px var(--f-mono)}
-.chart .bar{fill:var(--primary)}
-.chart .col:hover .bar,.chart .col:focus .bar{fill:var(--accent)}
-.chart .col{outline:none}
-.chart .hit{fill:transparent}
-details.data summary{cursor:pointer;font-size:13px;color:var(--muted)}
-.tip{position:fixed;z-index:60;pointer-events:none;background:var(--ink);color:var(--surface);font-size:12.5px;font-weight:600;padding:6px 9px;border-radius:6px;max-width:240px;box-shadow:var(--shadow)}
-
-/* ---------- Diálogos y avisos ---------- */
-dialog{border:0;padding:0;border-radius:12px;background:var(--surface);color:var(--ink);width:min(520px,calc(100vw - 32px));max-height:calc(100dvh - 48px);box-shadow:var(--shadow)}
-dialog::backdrop{background:rgba(8,16,24,.55)}
-dialog.viewer{width:min(1000px,calc(100vw - 24px));background:#0B1116;color:#F2F5F7}
-.dlg-body{display:grid;gap:14px;padding:20px}
-.dlg-body h2{color:var(--ink)}
-.dlg-actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}
-.dlg-actions .spacer{flex:1}
-.viewer img{display:block;width:100%;max-height:78dvh;object-fit:contain;background:#000}
-.viewer .cap{padding:12px 16px;font-size:14.5px}
-.viewer .close{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.55);color:#fff}
-.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:70;background:var(--ink);color:var(--surface);padding:10px 16px;border-radius:8px;font-weight:600;font-size:14px;box-shadow:var(--shadow);max-width:calc(100vw - 32px)}
-.toast.bad{background:var(--bad);color:#fff}
-@media (max-width:899px){.toast{bottom:calc(88px + env(safe-area-inset-bottom,0px))}}
-.skeleton{display:grid;place-items:center;min-height:60vh;color:var(--muted);gap:8px}
-@media (prefers-reduced-motion:no-preference){.tl-body,.pcard,.btn{transition:border-color .15s ease,background-color .15s ease}}
+  :root{--bg:#f4f6f9;--card:#fff;--tx:#1b2430;--mut:#667085;--bd:#d9dee7;--pri:#24292f;--acc:#0969da;--ok:#177a3c;--err:#b42318;--warn:#a15c07}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,Segoe UI,Roboto,sans-serif;font-size:16px}
+  header{position:sticky;top:0;z-index:5;background:var(--pri);color:#fff;display:flex;align-items:center;gap:10px;
+         padding:calc(10px + env(safe-area-inset-top)) 14px 10px}
+  header h1{margin:0;font-size:18px;flex:1}
+  .chip{font-size:12px;padding:3px 9px;border-radius:99px;background:#ffffff26}
+  .chip.off{background:#b4231899}
+  #btnSync{background:#fff;color:var(--pri);border:0;border-radius:99px;padding:7px 12px;font-weight:600;font-size:14px}
+  #btnSync.busy{opacity:.6}
+  main{padding:14px 14px calc(90px + env(safe-area-inset-bottom));max-width:720px;margin:0 auto}
+  .view{display:grid;gap:12px}
+  .card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px}
+  .card h2{margin:0 0 10px;font-size:16px}
+  label{display:block;font-size:13px;color:var(--mut);margin:10px 0 4px}
+  label:first-child{margin-top:0}
+  input,select,textarea{width:100%;padding:12px;border:1px solid var(--bd);border-radius:8px;font:inherit;background:#fff;color:var(--tx)}
+  input[type=checkbox]{width:auto;margin-right:8px}
+  textarea{min-height:90px;resize:vertical}
+  button{font:inherit;cursor:pointer}
+  .btn{background:var(--acc);color:#fff;border:0;border-radius:10px;padding:13px 16px;font-weight:600;width:100%}
+  .btn.sec{background:#fff;color:var(--acc);border:1px solid var(--acc)}
+  .btn.danger{background:#fff;color:var(--err);border:1px solid var(--err)}
+  .btn:disabled{opacity:.5}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .hide{display:none!important}
+  #preview{width:100%;max-height:260px;object-fit:contain;border-radius:10px;border:1px solid var(--bd);margin-top:10px;background:#eef1f6}
+  .item{display:grid;grid-template-columns:72px 1fr;gap:12px}
+  .item img,.item .ph{width:72px;height:72px;object-fit:cover;border-radius:8px;border:1px solid var(--bd);background:#eef1f6}
+  .item h3{margin:0 0 2px;font-size:15px}
+  .meta{font-size:13px;color:var(--mut)}
+  .pill{display:inline-block;padding:2px 8px;border-radius:99px;font-size:12px;background:#eef1f6;margin:4px 4px 0 0}
+  .pill.ok{background:#e6f4ea;color:var(--ok)} .pill.pend{background:#fff4e0;color:var(--warn)} .pill.err{background:#fdecea;color:var(--err)}
+  .errtxt{font-size:12px;color:var(--err);margin-top:4px;word-break:break-word}
+  .desc{font-size:14px;margin-top:6px;white-space:pre-wrap;word-break:break-word}
+  .del{background:none;border:0;color:var(--err);font-size:13px;padding:6px 0 0}
+  nav{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--bd);display:grid;grid-template-columns:repeat(3,1fr);
+      padding-bottom:env(safe-area-inset-bottom);z-index:5}
+  nav button{background:none;border:0;padding:10px 4px;font-size:12px;color:var(--mut)}
+  nav button span{display:block;font-size:20px}
+  nav button.on{color:var(--acc);font-weight:600}
+  #toast{position:fixed;left:14px;right:14px;bottom:calc(76px + env(safe-area-inset-bottom));padding:12px 14px;border-radius:10px;
+         color:#fff;background:#24292f;font-size:14px;z-index:9;display:none;white-space:pre-wrap}
+  #toast.ok{background:var(--ok)} #toast.err{background:var(--err)}
+  small{color:var(--mut)}
+  code{background:#eef1f6;padding:1px 5px;border-radius:4px;font-size:12px}
+  .seg{display:flex;gap:6px}
+  .seg button{flex:1;padding:8px;border:1px solid var(--bd);background:#fff;border-radius:8px;font-size:14px}
+  .seg button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
 </style>
+</head>
+<body>
+<header>
+  <h1>📋 Registros</h1>
+  <span id="net" class="chip">…</span>
+  <button id="btnSync" title="Sincronizar">⟳ <span id="pendN">0</span></button>
+</header>
 
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
-  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
-  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
-  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
-  <symbol id="i-chev" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
-  <symbol id="i-back" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
-  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13" r="3"/></symbol>
-  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></symbol>
-  <symbol id="i-clip" viewBox="0 0 24 24"><path d="m21.4 11.1-9.2 9.2a6 6 0 0 1-8.5-8.5l8.6-8.6a4 4 0 1 1 5.7 5.7l-8.6 8.6a2 2 0 0 1-2.8-2.8l8.5-8.5"/></symbol>
-  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
-  <symbol id="i-locate" viewBox="0 0 24 24"><path d="M2 12h3M19 12h3M12 2v3M12 19v3"/><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.5"/></symbol>
-  <symbol id="i-msg" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
-  <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M4 14.9A7 7 0 1 1 15.7 8h1.8a4.5 4.5 0 0 1 2.5 8.2"/><path d="M12 12v9M16 16l-4-4-4 4"/></symbol>
-  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></symbol>
-  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
-  <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></symbol>
-  <symbol id="i-file" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v5h6M16 13H8M16 17H8M10 9H8"/></symbol>
-  <symbol id="i-sheet" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v5h6M8 13h8M8 17h8M12 11v8"/></symbol>
-  <symbol id="i-brief" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></symbol>
-  <symbol id="i-dash" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></symbol>
-  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></symbol>
-  <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></symbol>
-  <symbol id="i-user" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
-  <symbol id="i-note" viewBox="0 0 24 24"><path d="M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4"/><path d="M2 6h4M2 10h4M2 14h4M2 18h4"/><path d="M21.4 5.6a2.1 2.1 0 1 0-3-3l-5 5a2 2 0 0 0-.5.9l-.8 2.8 2.8-.8a2 2 0 0 0 .9-.5z"/></symbol>
-  <symbol id="i-hardhat" viewBox="0 0 24 24"><path d="M2 18a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1z"/><path d="M10 10V5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5M4 15v-3a6 6 0 0 1 6-6M14 6a6 6 0 0 1 6 6v3"/></symbol>
-  <symbol id="i-package" viewBox="0 0 24 24"><path d="M21 8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.7Z"/><path d="m3.3 7 8.7 5 8.7-5M12 22V12M7.5 4.3l9 5.1"/></symbol>
-  <symbol id="i-cash" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></symbol>
-  <symbol id="i-in" viewBox="0 0 24 24"><path d="M12 3v13M6 10l6 6 6-6M5 21h14"/></symbol>
-  <symbol id="i-out" viewBox="0 0 24 24"><path d="M12 21V8M6 14l6-6 6 6M5 3h14"/></symbol>
-  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
-  <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></symbol>
-  <symbol id="i-swap" viewBox="0 0 24 24"><path d="m16 3 4 4-4 4M20 7H4M8 21l-4-4 4-4M4 17h16"/></symbol>
-  <symbol id="i-wifi-off" viewBox="0 0 24 24"><path d="M12 20h.01M8.5 16.4a5 5 0 0 1 7 0M2 8.8a15 15 0 0 1 4.2-2.6M22 8.8a15 15 0 0 0-11.3-3.8M5 12.9a10 10 0 0 1 5.2-2.7M19 12.9a10 10 0 0 0-2-1.5M2 2l20 20"/></symbol>
-  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></symbol>
-  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
-</svg>
+<main>
+  <!-- NUEVO -->
+  <section id="v-new" class="view">
+    <form id="form" class="card">
+      <label>Título *</label><input id="f_titulo" required autocomplete="off">
+      <label>Fecha</label><input id="f_fecha" type="date">
+      <label>Responsable</label><input id="f_resp" autocomplete="off">
+      <div class="two">
+        <div><label>Estado</label><select id="f_estado"><option>Pendiente</option><option>En curso</option><option>Completado</option></select></div>
+        <div><label>Prioridad</label><select id="f_prio"><option>Baja</option><option selected>Media</option><option>Alta</option></select></div>
+      </div>
+      <label>Descripción</label><textarea id="f_desc"></textarea>
 
-<div class="shell">
-  <nav class="nav" id="nav" aria-label="Secciones">
-    <a class="brand" href="#/">
-      <svg viewBox="0 0 64 64" aria-hidden="true"><rect x="16" y="10" width="30" height="44" rx="4" fill="#FFFFFF"/><g fill="#E8A317"><rect x="12" y="15" width="8" height="5" rx="2.5"/><rect x="12" y="26" width="8" height="5" rx="2.5"/><rect x="12" y="37" width="8" height="5" rx="2.5"/><rect x="12" y="48" width="8" height="5" rx="2.5"/></g><g stroke="#12304D" stroke-width="3" stroke-linecap="round"><path d="M24 20h15M24 28h15M24 36h10"/></g><path d="M45 34a9 9 0 0 1 9 9c0 6-9 14-9 14s-9-8-9-14a9 9 0 0 1 9-9Z" fill="#E8A317" stroke="#12304D" stroke-width="2.5"/><circle cx="45" cy="43" r="3.2" fill="#12304D"/></svg>
-      <span><b>Bitácora de Campo</b><small>Registro de terreno</small></span>
-    </a>
-    <a class="tab" href="#/" data-tab="">
-      <svg class="ic"><use href="#i-dash"/></svg><span>Panel</span></a>
-    <a class="tab" href="#/proyectos" data-tab="proyectos">
-      <svg class="ic"><use href="#i-brief"/></svg><span>Proyectos</span></a>
-    <a class="tab" href="#/buscar" data-tab="buscar">
-      <svg class="ic"><use href="#i-search"/></svg><span>Buscar</span></a>
-    <a class="tab" href="#/catalogos" data-tab="catalogos">
-      <svg class="ic"><use href="#i-book"/></svg><span>Catálogos</span></a>
-    <a class="tab" href="#/equipo" data-tab="equipo">
-      <svg class="ic"><use href="#i-users"/></svg><span>Equipo</span></a>
-    <div class="nav-foot">
-      <button class="sync-pill" id="sync-pill" data-state="idle" data-act="go-team"><span class="dot"></span><span id="sync-text">Conectando…</span></button>
+      <label>Imagen (opcional)</label>
+      <div class="two">
+        <button type="button" class="btn sec" id="btnCam">📷 Tomar foto</button>
+        <button type="button" class="btn sec" id="btnPick">🖼️ Galería</button>
+      </div>
+      <input type="file" id="fileCam" accept="image/*" capture="environment" class="hide">
+      <input type="file" id="fileGal" accept="image/*" class="hide">
+      <img id="preview" class="hide" alt="Vista previa">
+      <div class="meta" id="imgInfo"></div>
+      <button type="button" class="btn danger hide" id="btnRmImg" style="margin-top:8px">Quitar imagen</button>
+
+      <button type="submit" class="btn" style="margin-top:16px">Guardar registro</button>
+      <div class="meta" style="margin-top:8px">Se guarda primero en el teléfono y se envía cuando haya conexión.</div>
+    </form>
+  </section>
+
+  <!-- LISTA -->
+  <section id="v-list" class="view hide">
+    <div class="seg">
+      <button data-f="all" class="on">Todos</button>
+      <button data-f="pend">Pendientes</button>
+      <button data-f="synced">Sincronizados</button>
     </div>
-  </nav>
-  <main id="main">
-    <div class="topbar">
-      <a class="brand" href="#/"><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="16" y="10" width="30" height="44" rx="4" fill="#FFFFFF"/><g fill="#E8A317"><rect x="12" y="15" width="8" height="5" rx="2.5"/><rect x="12" y="26" width="8" height="5" rx="2.5"/><rect x="12" y="37" width="8" height="5" rx="2.5"/><rect x="12" y="48" width="8" height="5" rx="2.5"/></g><path d="M45 34a9 9 0 0 1 9 9c0 6-9 14-9 14s-9-8-9-14a9 9 0 0 1 9-9Z" fill="#E8A317"/></svg><b>Bitácora de Campo</b></a>
-      <button class="sync-pill" id="sync-pill-m" data-state="idle" data-act="go-team"><span class="dot"></span><span id="sync-text-m">Conectando…</span></button>
+    <div id="list" style="display:grid;gap:10px"></div>
+  </section>
+
+  <!-- AJUSTES -->
+  <section id="v-cfg" class="view hide">
+    <div class="card">
+      <h2>Destino de sincronización</h2>
+      <select id="dest">
+        <option value="github">GitHub (repositorio)</option>
+        <option value="flow">Power Automate → SharePoint / OneDrive</option>
+      </select>
+
+      <div id="cfgGithub">
+        <label>Usuario u organización (owner)</label><input id="owner" autocomplete="off">
+        <label>Repositorio de datos (privado)</label><input id="repo" autocomplete="off">
+        <label>Rama</label><input id="branch">
+        <label>Archivo de datos (JSON)</label><input id="dataPath">
+        <label>Carpeta de imágenes</label><input id="imgDir">
+        <label>Token (fine-grained, Contents: Read and write)</label><input id="token" type="password" autocomplete="off" placeholder="github_pat_...">
+      </div>
+
+      <div id="cfgFlow" class="hide">
+        <label>URL del flujo (desencadenador HTTP)</label><input id="flowUrl" autocomplete="off" placeholder="https://prod-00.westus.logic.azure.com/...">
+        <label style="display:flex;align-items:center"><input type="checkbox" id="noCors"> No verificar la respuesta (usar si el flujo no devuelve cabecera CORS)</label>
+      </div>
+
+      <label style="display:flex;align-items:center;margin-top:14px"><input type="checkbox" id="auto"> Sincronizar automáticamente al tener red</label>
+      <button class="btn" id="btnSaveCfg" style="margin-top:12px">Guardar ajustes</button>
+      <button class="btn sec" id="btnTest" style="margin-top:8px">Probar conexión</button>
+      <p><small>El token y la URL quedan guardados solo en este teléfono. No uses cuentas ni tokens compartidos.</small></p>
     </div>
-    <div id="view"><div class="skeleton"><span>Cargando bitácora…</span></div></div>
-  </main>
-</div>
-<dialog id="dlg"></dialog>
-<div class="tip" id="tip" hidden></div>
-<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
-<input type="file" id="in-camera" accept="image/*" capture="environment" hidden>
-<input type="file" id="in-gallery" accept="image/*" multiple hidden>
-<input type="file" id="in-file" multiple hidden>
+
+    <div class="card">
+      <h2>Datos en el teléfono</h2>
+      <div class="meta" id="storeInfo"></div>
+      <button class="btn sec" id="btnExport" style="margin-top:10px">Descargar respaldo (JSON)</button>
+      <button class="btn danger" id="btnClean" style="margin-top:8px">Liberar espacio: borrar los ya sincronizados</button>
+    </div>
+
+    <div class="card" id="installCard">
+      <h2>Instalar como app</h2>
+      <button class="btn hide" id="btnInstall">Instalar en este dispositivo</button>
+      <div class="meta" id="installHelp">Android (Chrome): menú ⋮ → "Instalar aplicación". iPhone (Safari): botón Compartir → "Agregar a pantalla de inicio".</div>
+    </div>
+  </section>
+</main>
+
+<nav>
+  <button data-v="new" class="on"><span>➕</span>Nuevo</button>
+  <button data-v="list"><span>🗂️</span>Registros</button>
+  <button data-v="cfg"><span>⚙️</span>Ajustes</button>
+</nav>
+<div id="toast"></div>
 
 <script>
 (() => {
-'use strict';
+  const $ = id => document.getElementById(id);
+  const GH = "https://api.github.com";
+  const CFG_KEY = "reg_cfg";
+  const MAX_SIDE = 1280, JPEG_Q = 0.8;
+  const DEFAULTS = { dest: "github", owner: "", repo: "", branch: "main", dataPath: "data/registros.json",
+                     imgDir: "data/imagenes", token: "", flowUrl: "", noCors: false, auto: true };
+  let currentBlob = null, previewUrl = null, filter = "all", syncing = false, listUrls = [], deferredInstall = null;
 
-/* ============================================================
-   Formato (es-CL) y utilidades
-   ============================================================ */
-const WD = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
-const WDL = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
-const MO = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
-const MOL = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
-const pad = (n) => String(n).padStart(2, '0');
-const D = (v) => (v instanceof Date ? v : new Date(v));
-const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const nowIso = () => new Date().toISOString();
-const clone = (x) => JSON.parse(JSON.stringify(x));
-const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+  /* ---------- utilidades ---------- */
+  function toast(text, type = "", ms = 4000) {
+    const t = $("toast"); t.textContent = text; t.className = type; t.style.display = "block";
+    clearTimeout(toast._t); toast._t = setTimeout(() => t.style.display = "none", ms);
+  }
+  const uuid = () => (crypto.randomUUID ? crypto.randomUUID() : "id-" + Date.now() + "-" + Math.random().toString(36).slice(2, 10));
+  const today = () => new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+  const encPath = p => p.split("/").filter(Boolean).map(encodeURIComponent).join("/");
+  function textToB64(t) {
+    const bytes = new TextEncoder().encode(t); let bin = "";
+    for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+    return btoa(bin);
+  }
+  function b64ToText(b64) {
+    const bin = atob(b64.replace(/\s/g, "")), bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return new TextDecoder().decode(bytes);
+  }
+  const blobToB64 = b => new Promise((res, rej) => {
+    const f = new FileReader(); f.onload = () => res(String(f.result).split(",")[1]); f.onerror = () => rej(f.error); f.readAsDataURL(b);
+  });
 
-const parseDateOnly = (s) => { const [y, m, d] = String(s).split('-').map(Number); return new Date(y, m - 1, d); };
-const fmtDate = (v) => { if (!v) return '—'; const d = D(v); return `${pad(d.getDate())}-${pad(d.getMonth() + 1)}-${d.getFullYear()}`; };
-const fmtDateOnly = (s) => (s ? fmtDate(parseDateOnly(s)) : '—');
-const fmtTime = (v) => { const d = D(v); return `${pad(d.getHours())}:${pad(d.getMinutes())}`; };
-const fmtDT = (v) => `${fmtDate(v)} ${fmtTime(v)}`;
-const fmtDayShort = (v) => { const d = D(v); return `${WD[d.getDay()]} ${d.getDate()} ${MO[d.getMonth()]}`; };
-const fmtDayLong = (v) => { const d = D(v); return `${WDL[d.getDay()]} ${d.getDate()} de ${MOL[d.getMonth()]} de ${d.getFullYear()}`; };
-const dayKey = (v) => { const d = D(v); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; };
-const toLocalInput = (d) => `${dayKey(d)}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-const fromLocalInput = (s) => {
-  const [date, time = '00:00'] = String(s).split('T');
-  const [y, m, d] = date.split('-').map(Number);
-  const [hh, mm] = time.split(':').map(Number);
-  return new Date(y, m - 1, d, hh || 0, mm || 0);
-};
-function fmtNum(n, dec = 0) {
-  if (n === null || n === undefined || Number.isNaN(n)) return '—';
-  const [i, f] = Math.abs(n).toFixed(dec).split('.');
-  return (n < 0 ? '-' : '') + i.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + (f ? ',' + f : '');
-}
-const fmtQty = (n) => (n === null || n === undefined ? '—' : Number.isInteger(n) ? fmtNum(n) : fmtNum(n, 2).replace(/,?0+$/, ''));
-const fmtMoney = (a, c) => (c === 'USD' ? `US$ ${fmtNum(a, 2)}` : c === 'UF' ? `UF ${fmtNum(a, 2)}` : `$ ${fmtNum(a, 0)}`);
-const fmtBytes = (n) => (!n ? '' : n < 1024 ? `${n} B` : n < 1048576 ? `${fmtNum(n / 1024)} KB` : `${fmtNum(n / 1048576, 1)} MB`);
-/** "150.000" → 150000 · "1.234,5" → 1234.5 · "7,5" / "7.5" → 7.5 */
-function parseDecimal(input) {
-  const s = String(input ?? '').trim().replace(/\s/g, '').replace(/^\$/, '');
-  if (!s) return null;
-  const norm = /^-?\d{1,3}(\.\d{3})+(,\d+)?$/.test(s) ? s.replace(/\./g, '').replace(',', '.') : s.replace(',', '.');
-  const n = Number(norm);
-  return Number.isFinite(n) ? n : null;
-}
-const normTag = (t) => String(t).trim().toLowerCase().replace(/^#/, '').replace(/\s+/g, '-');
-const fmtCoords = (lat, lng) => `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-const mapsUrl = (lat, lng) => `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+  /* ---------- configuración ---------- */
+  function getCfg() { try { return { ...DEFAULTS, ...(JSON.parse(localStorage.getItem(CFG_KEY)) || {}) }; } catch { return { ...DEFAULTS }; } }
+  function readCfgForm() {
+    return { dest: $("dest").value, owner: $("owner").value.trim(), repo: $("repo").value.trim(),
+      branch: $("branch").value.trim() || "main", dataPath: $("dataPath").value.trim() || DEFAULTS.dataPath,
+      imgDir: ($("imgDir").value.trim() || DEFAULTS.imgDir).replace(/\/+$/, ""), token: $("token").value.trim(),
+      flowUrl: $("flowUrl").value.trim(), noCors: $("noCors").checked, auto: $("auto").checked };
+  }
+  function applyCfgForm() {
+    const c = getCfg();
+    for (const k of ["dest","owner","repo","branch","dataPath","imgDir","token","flowUrl"]) $(k).value = c[k];
+    $("noCors").checked = c.noCors; $("auto").checked = c.auto; toggleDest();
+  }
+  function toggleDest() {
+    const g = $("dest").value === "github";
+    $("cfgGithub").classList.toggle("hide", !g); $("cfgFlow").classList.toggle("hide", g);
+  }
+  $("dest").onchange = toggleDest;
+  $("btnSaveCfg").onclick = () => {
+    try { localStorage.setItem(CFG_KEY, JSON.stringify(readCfgForm())); toast("Ajustes guardados", "ok"); syncAll(false); }
+    catch { toast("No se pudieron guardar los ajustes", "err"); }
+  };
+  function cfgError(c) {
+    if (c.dest === "github") {
+      if (!c.owner || !c.repo || !c.token) return "Completa owner, repositorio y token en Ajustes.";
+    } else if (!/^https:\/\//.test(c.flowUrl)) return "Falta la URL del flujo en Ajustes.";
+    return "";
+  }
 
-/** UUID v7: se genera en el dispositivo para que un registro creado sin señal ya tenga su ID definitivo. */
-function uuid() {
-  const b = new Uint8Array(16);
-  crypto.getRandomValues(b);
-  const ts = Date.now();
-  b[0] = Math.floor(ts / 2 ** 40) & 255; b[1] = Math.floor(ts / 2 ** 32) & 255; b[2] = Math.floor(ts / 2 ** 24) & 255;
-  b[3] = Math.floor(ts / 2 ** 16) & 255; b[4] = Math.floor(ts / 2 ** 8) & 255; b[5] = ts & 255;
-  b[6] = (b[6] & 15) | 0x70; b[8] = (b[8] & 63) | 0x80;
-  const h = Array.from(b, (x) => x.toString(16).padStart(2, '0')).join('');
-  return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20)}`;
-}
-const withTimeout = (p, ms) => Promise.race([p, new Promise((_, rej) => setTimeout(() => rej({ code: 'timeout' }), ms))]);
-const ic = (name, cls = '') => `<svg class="ic ${cls}" aria-hidden="true"><use href="#i-${name}"/></svg>`;
-
-/* ============================================================
-   Catálogo de etiquetas del dominio
-   ============================================================ */
-const ROLE = { ADMIN: 'Administrador', SUPERVISOR: 'Supervisor', OPERATOR: 'Operador de campo' };
-const PSTATUS = { ACTIVE: 'Activo', PLANNED: 'Planificado', ON_HOLD: 'Suspendido', CLOSED: 'Cerrado' };
-const ETYPE = {
-  GENERAL: { label: 'General', icon: 'note', v: '--t-general' },
-  LABOR: { label: 'Personal', icon: 'hardhat', v: '--t-labor' },
-  STOCK: { label: 'Stock / activos', icon: 'package', v: '--t-stock' },
-  TRANSACTION: { label: 'Ingreso / egreso', icon: 'cash', v: '--t-tx' },
-};
-const ICAT = { MATERIAL: 'Material', TOOL: 'Herramienta', EQUIPMENT: 'Equipo', ASSET: 'Activo' };
-const CURRENCIES = ['CLP', 'USD', 'UF'];
-const EDIT_WINDOW_H = 48;
-const CATDEF = {
-  workers: {
-    label: 'Personal', single: 'persona', icon: 'hardhat',
-    fields: [
-      { k: 'full_name', l: 'Nombre completo', req: true },
-      { k: 'tax_id', l: 'RUT', ph: '12.345.678-9' },
-      { k: 'company', l: 'Empresa / contratista' },
-      { k: 'position', l: 'Cargo', ph: 'Mecánico, soldador, rigger…' },
-    ],
-    title: (x) => x.full_name, sub: (x) => [x.position, x.company, x.tax_id],
-    defaults: (name) => ({ full_name: name, tax_id: null, company: null, position: null }),
-  },
-  items: {
-    label: 'Ítems', single: 'ítem', icon: 'package',
-    fields: [
-      { k: 'name', l: 'Nombre', req: true, ph: 'Cemento, rodillo de carga…' },
-      { k: 'code', l: 'Código / SKU' },
-      { k: 'unit', l: 'Unidad', req: true, ph: 'un, kg, m, m³, saco…' },
-    ],
-    title: (x) => x.name, sub: (x) => [x.code, ICAT[x.category], x.unit && `unidad: ${x.unit}`],
-    defaults: (name) => ({ name, code: null, unit: 'un', category: 'MATERIAL' }),
-  },
-  suppliers: {
-    label: 'Proveedores', single: 'proveedor', icon: 'brief',
-    fields: [
-      { k: 'name', l: 'Razón social / nombre', req: true },
-      { k: 'tax_id', l: 'RUT', ph: '76.123.456-7' },
-      { k: 'contact_name', l: 'Contacto' },
-      { k: 'phone', l: 'Teléfono' },
-      { k: 'email', l: 'Email' },
-    ],
-    title: (x) => x.name, sub: (x) => [x.tax_id, x.contact_name, x.phone],
-    defaults: (name) => ({ name, tax_id: null, contact_name: null, phone: null, email: null }),
-  },
-};
-
-/* ============================================================
-   Almacenamiento local (IndexedDB): caché + cola de envío
-   ============================================================ */
-const Local = {
-  db: null,
-  async open() {
-    try {
-      if (!('indexedDB' in window)) return;
-      this.db = await new Promise((res, rej) => {
-        const r = indexedDB.open('bitacora-campo', 1);
-        r.onupgradeneeded = () => {
-          for (const s of ['records', 'blobs', 'meta']) if (!r.result.objectStoreNames.contains(s)) r.result.createObjectStore(s);
-        };
-        r.onsuccess = () => res(r.result);
-        r.onerror = () => rej(r.error);
-        r.onblocked = () => rej(new Error('blocked'));
-      });
-    } catch { this.db = null; }
-  },
-  run(store, mode, fn) {
-    if (!this.db) return Promise.resolve(undefined);
-    return new Promise((res) => {
-      try {
-        const tx = this.db.transaction(store, mode);
-        const req = fn(tx.objectStore(store));
-        tx.oncomplete = () => res(req ? req.result : undefined);
-        tx.onerror = tx.onabort = () => res(undefined);
-      } catch { res(undefined); }
+  /* ---------- IndexedDB (almacenamiento local) ---------- */
+  let dbp = null;
+  const db = () => dbp || (dbp = new Promise((res, rej) => {
+    const r = indexedDB.open("registros-db", 1);
+    r.onupgradeneeded = () => r.result.createObjectStore("records", { keyPath: "id" });
+    r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+  }));
+  async function tx(mode, fn) {
+    const d = await db();
+    return new Promise((res, rej) => {
+      const t = d.transaction("records", mode), rq = fn(t.objectStore("records"));
+      t.oncomplete = () => res(rq && rq.result); t.onerror = () => rej(t.error); t.onabort = () => rej(t.error);
     });
-  },
-  get(store, key) { return this.run(store, 'readonly', (s) => s.get(key)); },
-  put(store, key, val) { return this.run(store, 'readwrite', (s) => s.put(val, key)); },
-  del(store, key) { return this.run(store, 'readwrite', (s) => s.delete(key)); },
-  all(store) { return this.run(store, 'readonly', (s) => s.getAll()); },
-};
+  }
+  const dbAll = () => tx("readonly", s => s.getAll());
+  const dbPut = r => tx("readwrite", s => s.put(r));
+  const dbDel = id => tx("readwrite", s => s.delete(id));
 
-/* ============================================================
-   Estado y sincronización
-   ============================================================ */
-const COLS = ['projects', 'entries', 'workers', 'items', 'suppliers', 'comments', 'members'];
-const S = {
-  data: Object.fromEntries(COLS.map((c) => [c, new Map()])),
-  pending: new Set(), inflight: new Set(),
-  mode: 'starting', // starting | local | cloud
-  db: null, assets: null, user: null, downloads: null,
-  me: null, isOwner: false, canWrite: true,
-  names: {}, avatars: {},
-  online: navigator.onLine, flushing: false, retryMs: 2000,
-  firstSnap: new Set(), registered: false,
-  mediaUrls: new Map(), mediaLoading: new Set(), mediaMissing: new Set(),
-  formActive: false, partial: null, lastPath: null,
-};
-const keyOf = (c, id) => `${c}/${id}`;
-const all = (c) => [...S.data[c].values()].filter((x) => !x.deleted_at);
-const byId = (c, id) => (id ? S.data[c].get(id) : undefined);
-const live = (c, id) => { const x = byId(c, id); return x && !x.deleted_at ? x : undefined; };
+  /* ---------- imagen ---------- */
+  async function toJpegBlob(file) {
+    let src;
+    try { src = await createImageBitmap(file, { imageOrientation: "from-image" }); }
+    catch {
+      src = await new Promise((res, rej) => {
+        const u = URL.createObjectURL(file), im = new Image();
+        im.onload = () => { URL.revokeObjectURL(u); res(im); }; im.onerror = () => rej(new Error("imagen no válida")); im.src = u;
+      });
+    }
+    const w = src.width, h = src.height, k = Math.min(1, MAX_SIDE / Math.max(w, h));
+    const cv = document.createElement("canvas"); cv.width = Math.round(w * k); cv.height = Math.round(h * k);
+    cv.getContext("2d").drawImage(src, 0, 0, cv.width, cv.height);
+    return new Promise((res, rej) => cv.toBlob(b => b ? res(b) : rej(new Error("no se pudo convertir")), "image/jpeg", JPEG_Q));
+  }
+  function setImage(blob) {
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    currentBlob = blob; previewUrl = blob ? URL.createObjectURL(blob) : null;
+    $("preview").src = previewUrl || ""; $("preview").classList.toggle("hide", !blob);
+    $("btnRmImg").classList.toggle("hide", !blob);
+    $("imgInfo").textContent = blob ? `Imagen: ${Math.round(blob.size / 1024)} KB` : "";
+  }
+  async function onFile(e) {
+    const f = e.target.files[0]; e.target.value = ""; if (!f) return;
+    try { setImage(await toJpegBlob(f)); } catch (err) { toast("No se pudo leer la imagen: " + err.message, "err"); }
+  }
+  $("fileCam").onchange = onFile; $("fileGal").onchange = onFile;
+  $("btnCam").onclick = () => $("fileCam").click();
+  $("btnPick").onclick = () => $("fileGal").click();
+  $("btnRmImg").onclick = () => setImage(null);
 
-async function save(col, obj) {
-  const prev = S.data[col].get(obj.id);
-  const ts = nowIso();
-  const doc = clone({ ...obj, created_at: prev?.created_at || obj.created_at || ts, updated_at: ts, version: (prev?.version || 0) + 1 });
-  if (!('deleted_at' in doc)) doc.deleted_at = null;
-  S.data[col].set(doc.id, doc);
-  S.pending.add(keyOf(col, doc.id));
-  await Local.put('records', keyOf(col, doc.id), { col, id: doc.id, data: doc, pending: true });
-  changed();
-  queueFlush(200);
-  return doc;
-}
-const softDelete = (col, obj) => save(col, { ...obj, deleted_at: nowIso() });
+  /* ---------- guardar local ---------- */
+  function resetForm() { $("form").reset(); $("f_prio").value = "Media"; $("f_fecha").value = today(); setImage(null); }
+  $("form").addEventListener("submit", async e => {
+    e.preventDefault();
+    const titulo = $("f_titulo").value.trim(); if (!titulo) return;
+    const rec = { id: uuid(), creado: new Date().toISOString(), titulo, fecha: $("f_fecha").value || null,
+      responsable: $("f_resp").value.trim(), estado: $("f_estado").value, prioridad: $("f_prio").value,
+      descripcion: $("f_desc").value.trim(), imagen: currentBlob, remotePath: "", sync: "pending", syncError: "" };
+    try {
+      await dbPut(rec); resetForm(); await updateBadge();
+      toast("Guardado en el teléfono ✔", "ok", 2500);
+      if (getCfg().auto && navigator.onLine) syncAll(false);
+    } catch (err) { toast("No se pudo guardar localmente: " + err.message, "err"); }
+  });
 
-function applyRemote(col, snap) {
-  let dirty = false;
-  if (!S.firstSnap.has(col)) {
-    // Primera foto del servidor: descarta de la caché lo que ya no existe allá (salvo lo pendiente de enviar).
-    const ids = new Set(snap.docs.map((d) => d.id));
-    for (const id of [...S.data[col].keys()]) {
-      const key = keyOf(col, id);
-      if (!ids.has(id) && !S.pending.has(key)) { S.data[col].delete(id); Local.del('records', key); dirty = true; }
+  /* ---------- lista ---------- */
+  document.querySelectorAll(".seg button").forEach(b => b.onclick = () => {
+    filter = b.dataset.f; document.querySelectorAll(".seg button").forEach(x => x.classList.toggle("on", x === b)); renderList();
+  });
+  async function renderList() {
+    listUrls.forEach(URL.revokeObjectURL); listUrls = [];
+    const all = (await dbAll()).sort((a, b) => b.creado.localeCompare(a.creado));
+    const rows = all.filter(r => filter === "all" || (filter === "synced" ? r.sync === "synced" : r.sync !== "synced"));
+    const box = $("list"); box.innerHTML = "";
+    if (!rows.length) { const p = document.createElement("div"); p.className = "meta"; p.textContent = "Sin registros."; box.appendChild(p); return; }
+    for (const r of rows) {
+      const card = document.createElement("div"); card.className = "card item";
+      let thumb;
+      if (r.imagen) { thumb = document.createElement("img"); const u = URL.createObjectURL(r.imagen); listUrls.push(u); thumb.src = u; thumb.alt = ""; }
+      else { thumb = document.createElement("div"); thumb.className = "ph"; }
+      const info = document.createElement("div");
+      const h = document.createElement("h3"); h.textContent = r.titulo;
+      const m = document.createElement("div"); m.className = "meta"; m.textContent = [r.fecha, r.responsable].filter(Boolean).join(" · ");
+      info.append(h, m);
+      const pill = (t, c) => { const s = document.createElement("span"); s.className = "pill " + (c || ""); s.textContent = t; return s; };
+      info.append(pill(r.estado), pill(r.prioridad),
+        r.sync === "synced" ? pill("✔ sincronizado", "ok") : r.sync === "error" ? pill("⚠ error", "err") : pill("⏳ pendiente", "pend"));
+      if (r.descripcion) { const d = document.createElement("div"); d.className = "desc"; d.textContent = r.descripcion; info.appendChild(d); }
+      if (r.syncError && r.sync !== "synced") { const e = document.createElement("div"); e.className = "errtxt"; e.textContent = r.syncError; info.appendChild(e); }
+      const del = document.createElement("button"); del.className = "del"; del.textContent = "Eliminar del teléfono";
+      del.onclick = async () => {
+        const warn = r.sync === "synced" ? "Se borrará solo la copia del teléfono; el registro enviado no se elimina del destino."
+                                          : "Este registro AÚN NO se ha sincronizado y se perderá.";
+        if (confirm(warn + "\n¿Continuar?")) { await dbDel(r.id); renderList(); updateBadge(); }
+      };
+      info.appendChild(del);
+      card.append(thumb, info); box.appendChild(card);
     }
   }
-  for (const ch of snap.docChanges()) {
-    const id = ch.doc.id; const key = keyOf(col, id);
-    if (ch.type === 'removed') {
-      if (!S.pending.has(key) && S.data[col].has(id)) { S.data[col].delete(id); Local.del('records', key); dirty = true; }
-      continue;
+
+  /* ---------- GitHub ---------- */
+  async function gh(c, path, opts = {}) {
+    const r = await fetch(GH + path, { ...opts, headers: { Authorization: "Bearer " + c.token, Accept: "application/vnd.github+json",
+      "X-GitHub-Api-Version": "2022-11-28", ...(opts.headers || {}) } });
+    if (!r.ok) {
+      let d = ""; try { d = (await r.json()).message; } catch {}
+      const e = new Error(`GitHub ${r.status}: ${d || r.statusText}`); e.status = r.status; throw e;
     }
-    const remote = ch.doc.data();
-    if (!remote) continue;
-    const local = S.data[col].get(id);
-    if (S.pending.has(key) && local && (local.updated_at || '') >= (remote.updated_at || '')) continue;
-    const doc = { ...clone(remote), id };
-    S.data[col].set(id, doc);
-    S.pending.delete(key);
-    Local.put('records', key, { col, id, data: doc, pending: false });
-    dirty = true;
+    return r;
   }
-  const first = !S.firstSnap.has(col);
-  S.firstSnap.add(col);
-  if (col === 'members' && first) registerSelf();
-  if (dirty || first) changed();
-}
+  const repoBase = c => `/repos/${encodeURIComponent(c.owner)}/${encodeURIComponent(c.repo)}`;
+  async function readData(c) {
+    try {
+      const j = await (await gh(c, `${repoBase(c)}/contents/${encPath(c.dataPath)}?ref=${encodeURIComponent(c.branch)}`)).json();
+      let b64 = j.content;
+      if (!b64 || j.encoding === "none") b64 = (await (await gh(c, `${repoBase(c)}/git/blobs/${j.sha}`)).json()).content;
+      const t = b64ToText(b64 || "");
+      return { sha: j.sha, data: t.trim() ? JSON.parse(t) : [] };
+    } catch (e) { if (e.status === 404) return { sha: null, data: [] }; throw e; }
+  }
+  async function putFile(c, path, b64, message, sha) {
+    const body = { message, content: b64, branch: c.branch }; if (sha) body.sha = sha;
+    return (await gh(c, `${repoBase(c)}/contents/${encPath(path)}`, { method: "PUT", body: JSON.stringify(body) })).json();
+  }
+  const toRemote = r => ({ id: r.id, creado: r.creado, titulo: r.titulo, fecha: r.fecha, responsable: r.responsable,
+    estado: r.estado, prioridad: r.prioridad, descripcion: r.descripcion, imagen: r.remotePath || null });
 
-let flushTimer = null;
-function queueFlush(ms) { clearTimeout(flushTimer); flushTimer = setTimeout(flush, ms); }
-
-async function flush() {
-  if (S.mode !== 'cloud' || !S.db || S.flushing || !S.canWrite) { updateSync(); return; }
-  S.flushing = true; updateSync();
-  let failed = false;
-  try {
-    for (const key of [...S.pending]) {
-      if (S.inflight.has(key)) continue;
-      const [col, id] = key.split('/');
-      const doc = S.data[col]?.get(id);
-      if (!doc) { S.pending.delete(key); continue; }
-      const sent = doc.updated_at;
-      // Una escritura a la vez por documento, aunque la anterior haya excedido el tiempo de espera.
-      S.inflight.add(key);
-      const p = S.db.doc(key).set(clone(doc));
-      p.then(() => S.inflight.delete(key), () => S.inflight.delete(key));
+  async function syncGithub(list, c) {
+    const ready = [];
+    for (const r of list) {
       try {
-        await withTimeout(p, 15000);
-        const cur = S.data[col].get(id);
-        if (cur && cur.updated_at === sent) {
-          S.pending.delete(key);
-          await Local.put('records', key, { col, id, data: cur, pending: false });
+        if (r.imagen && !r.remotePath) {
+          const path = `${c.imgDir}/${r.id}.jpg`;
+          try { await putFile(c, path, await blobToB64(r.imagen), `Imagen: ${r.titulo}`); }
+          catch (e) { if (e.status !== 422) throw e; }           // 422: ya existía (reintento)
+          r.remotePath = path; await dbPut(r);
         }
+        ready.push(r);
       } catch (e) {
-        failed = true;
-        if (e?.code === 'invalid_argument') { S.canWrite = false; toast('Tu acceso a esta bitácora es de solo lectura.', 'bad'); scheduleRender(); }
-        else if (e?.code === 'quota_exceeded') toast('La base compartida alcanzó su límite de documentos. Elimina registros antiguos o migra al servidor definitivo.', 'bad');
-        break;
+        if (e instanceof TypeError) throw e;
+        r.sync = "error"; r.syncError = e.message; await dbPut(r);
       }
     }
-    if (!failed) failed = !(await flushMedia());
-  } finally {
-    S.flushing = false;
-    S.retryMs = failed ? Math.min(S.retryMs * 2, 60000) : 2000;
-    updateSync();
-    if (S.pending.size || failed) queueFlush(failed ? S.retryMs : 1500);
-  }
-}
-
-/* ---------- Fotos y archivos ---------- */
-const ASSET_TYPES = new Set(['image/png', 'image/jpeg', 'image/gif', 'image/webp', 'application/pdf', 'text/csv', 'text/plain', 'application/json', 'text/markdown']);
-const DB_MEDIA_MAX = 190 * 1024;
-const BLANK = 'data:image/gif;base64,R0lGODlhAQABAAAAACw=';
-const attSynced = (a) => !!(a.asset || a.media || a.local_only);
-
-// Las imágenes se muestran como data: URL (no blob:), que la política de contenido de la página siempre admite.
-function blobToDataUrl(blob) {
-  return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = () => rej(r.error); r.readAsDataURL(blob); });
-}
-function dataUrlToBlob(url) {
-  const [head, b64] = url.split(',');
-  const mime = /data:([^;,]+)/.exec(head)?.[1] || 'application/octet-stream';
-  const bin = atob(b64); const arr = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
-  return new Blob([arr], { type: mime });
-}
-async function loadBitmap(blob) {
-  if ('createImageBitmap' in window) { try { return await createImageBitmap(blob, { imageOrientation: 'from-image' }); } catch { /* usa <img> */ } }
-  const src = await blobToDataUrl(blob);
-  return new Promise((res, rej) => {
-    const img = new Image();
-    img.onload = () => res(img);
-    img.onerror = () => rej(new Error('imagen ilegible'));
-    img.src = src;
-  });
-}
-/** Reduce la foto a `maxSide` px y JPEG: evidencia suficiente y liviana para datos móviles. */
-async function toJpeg(blob, maxSide, quality) {
-  const bmp = await loadBitmap(blob);
-  const s = Math.min(1, maxSide / Math.max(bmp.width, bmp.height));
-  const w = Math.max(1, Math.round(bmp.width * s)); const h = Math.max(1, Math.round(bmp.height * s));
-  const c = document.createElement('canvas'); c.width = w; c.height = h;
-  c.getContext('2d').drawImage(bmp, 0, 0, w, h);
-  const out = await new Promise((res) => c.toBlob(res, 'image/jpeg', quality));
-  if (!out) throw new Error('no se pudo comprimir');
-  return { blob: out, width: w, height: h };
-}
-async function shrinkToFit(blob, max) {
-  for (const [side, q] of [[1280, 0.6], [1024, 0.55], [800, 0.5], [640, 0.45]]) {
-    const r = await toJpeg(blob, side, q);
-    if (r.blob.size <= max) return r.blob;
-  }
-  return null;
-}
-
-/** Sube los adjuntos pendientes. Devuelve false si hay que reintentar más tarde. */
-async function flushMedia() {
-  if (!S.db) return true;
-  const items = (await Local.all('blobs')) || [];
-  for (const m of items) {
-    if (m.state !== 'pending') continue;
-    const entry = S.data.entries.get(m.entryId);
-    const att = entry?.attachments?.find((a) => a.id === m.id);
-    if (!entry || entry.deleted_at || !att) { await Local.del('blobs', m.id); continue; }
-    if (attSynced(att)) { await Local.put('blobs', m.id, { ...m, state: 'done' }); continue; }
-    let patch = null;
-    try {
-      if (S.assets && ASSET_TYPES.has(m.mime)) {
-        const r = await withTimeout(S.assets.upload(m.blob, { type: m.mime }), 90000);
-        patch = { asset: r.id };
-      }
-    } catch (e) {
-      if (['not_granted', 'capability_disabled', 'capability_removed'].includes(e?.code)) S.assets = null;
-      else if (!['unsupported_type', 'too_large', 'quota_or_state'].includes(e?.code)) return false;
-    }
-    if (!patch) {
-      // Sin permiso de subida de archivos: la versión reducida viaja dentro de la base compartida.
+    if (!ready.length) return;
+    for (let i = 0; i < 4; i++) {
+      const { sha, data } = await readData(c), ids = new Set(data.map(x => x.id));
+      for (const r of ready) if (!ids.has(r.id)) data.push(toRemote(r));
       try {
-        let blob = m.blob;
-        if (blob.size > DB_MEDIA_MAX && String(m.mime).startsWith('image/')) blob = await shrinkToFit(blob, DB_MEDIA_MAX);
-        if (blob && blob.size <= DB_MEDIA_MAX) {
-          const data = await blobToDataUrl(blob);
-          await withTimeout(S.db.doc(`media/${m.id}`).set({ data, mime: blob.type || m.mime, entry_id: m.entryId }), 20000);
-          patch = { media: true };
-        } else patch = { local_only: true };
-      } catch { return false; }
-    }
-    const fresh = S.data.entries.get(m.entryId);
-    if (!fresh) continue;
-    await save('entries', { ...fresh, attachments: fresh.attachments.map((a) => (a.id === m.id ? { ...a, ...patch } : a)) });
-    await Local.put('blobs', m.id, { ...m, state: patch.local_only ? 'local' : 'done' });
-  }
-  return true;
-}
-
-function mediaSrc(att) {
-  if (att.asset) return '/_blob/' + att.asset;
-  if (att.previewUrl) return att.previewUrl;
-  const cached = S.mediaUrls.get(att.id);
-  if (cached) return cached;
-  if (!S.mediaMissing.has(att.id)) loadMedia(att);
-  return BLANK;
-}
-async function loadMedia(att) {
-  if (S.mediaLoading.has(att.id)) return;
-  S.mediaLoading.add(att.id);
-  let url = null;
-  try {
-    const m = await Local.get('blobs', att.id);
-    if (m?.blob && String(m.mime).startsWith('image/')) url = await blobToDataUrl(m.blob);
-    else if (att.media && S.db) {
-      const snap = await S.db.doc(`media/${att.id}`).get();
-      if (snap.exists) url = snap.data().data;
-    }
-  } catch { /* se muestra el marcador */ }
-  S.mediaLoading.delete(att.id);
-  if (!url) { S.mediaMissing.add(att.id); return; }
-  S.mediaUrls.set(att.id, url);
-  document.querySelectorAll(`[data-media="${att.id}"]`).forEach((el) => { if (el.tagName === 'IMG') el.src = url; });
-}
-async function mediaBlob(att) {
-  if (att.asset) { const r = await fetch('/_blob/' + att.asset); if (!r.ok) throw new Error('no disponible'); return r.blob(); }
-  const m = await Local.get('blobs', att.id);
-  if (m?.blob) return m.blob;
-  if (att.media && S.db) { const snap = await S.db.doc(`media/${att.id}`).get(); if (snap.exists) return dataUrlToBlob(snap.data().data); }
-  throw new Error('El archivo aún no se sube desde el dispositivo que lo capturó.');
-}
-async function mediaDataUrl(att) {
-  const cached = S.mediaUrls.get(att.id);
-  if (cached && cached.startsWith('data:')) return cached;
-  return blobToDataUrl(await mediaBlob(att));
-}
-
-/* ---------- Identidad y permisos ---------- */
-async function initCloud() {
-  const c = window.claude;
-  if (!c || typeof c.use !== 'function') return false;
-  const use = (n) => c.use(n).catch(() => null);
-  const [db, user, assets, downloads] = await Promise.all([use('db'), use('user'), use('assets'), use('downloads')]);
-  S.downloads = downloads;
-  if (!db) return false;
-  S.db = db; S.assets = assets; S.user = user;
-  if (user) {
-    const me = await user.me();
-    S.isOwner = !!me.isOwner;
-    if (me.id) S.me = { id: me.id };
-    if (me.name) S.names[me.id] = me.name;
-    if (me.avatarUrl && me.id) S.avatars[me.id] = me.avatarUrl;
-    if ((await user.can('data.write')) === false) S.canWrite = false;
-  }
-  if (!S.me) {
-    let anon = await Local.get('meta', 'anonId');
-    if (!anon) { anon = 'anon-' + uuid(); await Local.put('meta', 'anonId', anon); }
-    S.me = { id: anon };
-  }
-  S.mode = 'cloud';
-  for (const col of COLS) {
-    db.collection(col).onSnapshot((snap) => applyRemote(col, snap), (err) => {
-      console.warn('Suscripción', col, err);
-      if (err?.code === 'revoked') { S.canWrite = false; updateSync(); }
-    });
-  }
-  return true;
-}
-function registerSelf() {
-  if (S.registered || S.mode !== 'cloud' || !S.me || !S.canWrite) return;
-  S.registered = true;
-  if (!S.data.members.get(S.me.id)) save('members', { id: S.me.id, role: S.isOwner ? 'ADMIN' : 'OPERATOR', joined_at: nowIso() });
-}
-function myRole() {
-  const m = S.me && S.data.members.get(S.me.id);
-  return m?.role || (S.isOwner ? 'ADMIN' : 'OPERATOR');
-}
-function nameOf(id) {
-  if (!id) return '—';
-  if (id === 'ejemplo') return 'Ejemplo';
-  return S.names[id] || S.data.members.get(id)?.name || (S.me && id === S.me.id ? 'Tú' : 'Usuario');
-}
-let namesTimer = null;
-function refreshNames() {
-  if (!S.user) return;
-  clearTimeout(namesTimer);
-  namesTimer = setTimeout(async () => {
-    const ids = new Set();
-    for (const e of S.data.entries.values()) if (e.author_id) ids.add(e.author_id);
-    for (const c of S.data.comments.values()) if (c.author_id) ids.add(c.author_id);
-    for (const m of S.data.members.values()) ids.add(m.id);
-    ids.delete('ejemplo');
-    if (!ids.size) return;
-    const ps = await S.user.profiles([...ids]);
-    let dirty = false;
-    for (const [id, p] of Object.entries(ps)) {
-      if (p.name && S.names[id] !== p.name) { S.names[id] = p.name; dirty = true; }
-      if (p.avatarUrl) S.avatars[id] = p.avatarUrl;
-    }
-    if (dirty) scheduleRender();
-  }, 150);
-}
-const canWrite = () => S.canWrite && !!S.me;
-const canEditEntry = (e) => {
-  if (!canWrite()) return false;
-  if (myRole() !== 'OPERATOR') return true;
-  return e.author_id === S.me.id && Date.now() - Date.parse(e.created_at) < EDIT_WINDOW_H * 3600e3;
-};
-const canEditProject = (p) => canWrite() && (myRole() !== 'OPERATOR' || p.created_by === S.me.id);
-const canDeleteCatalog = () => canWrite() && myRole() !== 'OPERATOR';
-const canManageTeam = () => canWrite() && myRole() === 'ADMIN';
-
-/* ============================================================
-   Consultas de dominio
-   ============================================================ */
-const projectName = (id) => byId('projects', id)?.name || 'Proyecto eliminado';
-const laborHours = (e) => (e.labor || []).reduce((s, l) => s + (Number(l.hours) || 0), 0);
-function visibleEntries() {
-  return all('entries').filter((e) => live('projects', e.project_id)).sort((a, b) => b.occurred_at.localeCompare(a.occurred_at));
-}
-/** Folio correlativo por proyecto, como las páginas de un libro de obras: nunca se renumera. */
-function folios(projectId) {
-  const list = [...S.data.entries.values()].filter((e) => e.project_id === projectId)
-    .sort((a, b) => (a.created_at || '').localeCompare(b.created_at || '') || a.id.localeCompare(b.id));
-  return new Map(list.map((e, i) => [e.id, i + 1]));
-}
-const folioTxt = (n) => (n ? `N° ${String(n).padStart(4, '0')}` : '');
-function entrySummary(e) {
-  if (e.type === 'LABOR') { const n = (e.labor || []).length; return `${n} ${n === 1 ? 'persona' : 'personas'} · ${fmtQty(laborHours(e))} h`; }
-  if (e.type === 'STOCK') {
-    return (e.stock || []).slice(0, 2).map((l) => `${l.direction === 'IN' ? 'Entrada' : 'Salida'} ${fmtQty(l.quantity)} ${byId('items', l.item_id)?.unit || ''} ${byId('items', l.item_id)?.name || ''}`.replace(/\s+/g, ' ').trim()).join(' · ')
-      + ((e.stock || []).length > 2 ? ` · +${e.stock.length - 2} más` : '');
-  }
-  if (e.type === 'TRANSACTION' && e.transaction) {
-    const t = e.transaction;
-    return `${t.kind === 'INCOME' ? 'Ingreso' : 'Egreso'} ${fmtMoney(t.amount, t.currency)} · ${t.concept}`;
-  }
-  return '';
-}
-function projectSummary(pid) {
-  const entries = all('entries').filter((e) => e.project_id === pid);
-  const counts = { GENERAL: 0, LABOR: 0, STOCK: 0, TRANSACTION: 0 };
-  const money = {}; const stock = {}; const workers = {};
-  let hours = 0;
-  for (const e of entries) {
-    counts[e.type] = (counts[e.type] || 0) + 1;
-    for (const l of e.labor || []) { hours += Number(l.hours) || 0; workers[l.worker_id] = (workers[l.worker_id] || 0) + (Number(l.hours) || 0); }
-    for (const l of e.stock || []) {
-      const s = (stock[l.item_id] ||= { in: 0, out: 0 });
-      s[l.direction === 'IN' ? 'in' : 'out'] += Number(l.quantity) || 0;
-    }
-    if (e.transaction) {
-      const k = `${e.transaction.kind}|${e.transaction.currency}`;
-      money[k] = (money[k] || 0) + (Number(e.transaction.amount) || 0);
+        await putFile(c, c.dataPath, textToB64(JSON.stringify(data, null, 2)), `Sincronizar ${ready.length} registro(s)`, sha);
+        for (const r of ready) { r.sync = "synced"; r.syncError = ""; r.syncedAt = new Date().toISOString(); await dbPut(r); }
+        return;
+      } catch (e) { if ((e.status === 409 || e.status === 422) && i < 3) continue; throw e; }
     }
   }
-  return {
-    total: entries.length, counts, hours,
-    workers: Object.entries(workers).map(([id, h]) => ({ name: byId('workers', id)?.full_name || '—', hours: h })).sort((a, b) => b.hours - a.hours),
-    money: Object.entries(money).map(([k, total]) => { const [kind, currency] = k.split('|'); return { kind, currency, total }; }).sort((a, b) => a.currency.localeCompare(b.currency) || a.kind.localeCompare(b.kind)),
-    stock: Object.entries(stock).map(([id, s]) => ({ name: byId('items', id)?.name || '—', unit: byId('items', id)?.unit || 'un', ...s })).sort((a, b) => a.name.localeCompare(b.name, 'es')),
-  };
-}
-function allTags() {
-  const count = {};
-  for (const e of all('entries')) for (const t of e.tags || []) count[t] = (count[t] || 0) + 1;
-  return Object.keys(count).sort((a, b) => count[b] - count[a] || a.localeCompare(b, 'es'));
-}
-function pendingCounts() {
-  const c = { entries: 0, projects: 0, comments: 0, catalogs: 0, members: 0, media: 0 };
-  for (const k of S.pending) {
-    const col = k.split('/')[0];
-    if (col === 'entries' || col === 'projects' || col === 'comments' || col === 'members') c[col]++;
-    else c.catalogs++;
-  }
-  for (const e of all('entries')) for (const a of e.attachments || []) if (!attSynced(a)) c.media++;
-  return c;
-}
 
-/* ============================================================
-   UI: avisos, diálogos, tooltip
-   ============================================================ */
-const view = document.getElementById('view');
-const dlg = document.getElementById('dlg');
-let toastTimer = null;
-function toast(msg, kind = '') {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.className = `toast ${kind}`; t.hidden = false;
-  clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.hidden = true; }, kind === 'bad' ? 6000 : 2800);
-}
-function showDialog(html, setup, cls = '') {
-  return new Promise((resolve) => {
-    let settled = false;
-    const done = (v) => { if (settled) return; settled = true; if (dlg.open) dlg.close(); resolve(v); };
-    dlg.className = cls; dlg.innerHTML = html;
-    dlg.onclose = () => done(undefined);
-    setup?.(dlg, done);
-    dlg.showModal();
-  });
-}
-function confirmBox({ title, message, ok = 'Confirmar', danger = false }) {
-  return showDialog(`<div class="dlg-body"><h2>${esc(title)}</h2><p>${esc(message)}</p>
-    <div class="dlg-actions"><button class="btn ghost" data-v="no">Cancelar</button><button class="btn ${danger ? 'danger' : 'primary'}" data-v="yes">${esc(ok)}</button></div></div>`,
-  (d, done) => d.querySelectorAll('[data-v]').forEach((b) => { b.onclick = () => done(b.dataset.v === 'yes'); })).then((v) => v === true);
-}
-function promptBox({ title, label, value = '', ok = 'Guardar', hint = '' }) {
-  return showDialog(`<form class="dlg-body" id="prompt-form"><h2>${esc(title)}</h2>
-    <label class="field"><span>${esc(label)}</span><input id="prompt-input" value="${esc(value)}" autocomplete="off">${hint ? `<small class="hint">${esc(hint)}</small>` : ''}</label>
-    <div class="dlg-actions"><button type="button" class="btn ghost" data-v="no">Cancelar</button><button class="btn primary" type="submit">${esc(ok)}</button></div></form>`,
-  (d, done) => {
-    d.querySelector('[data-v="no"]').onclick = () => done(null);
-    d.querySelector('form').onsubmit = (ev) => { ev.preventDefault(); const v = d.querySelector('#prompt-input').value.trim(); done(v || null); };
-    setTimeout(() => d.querySelector('#prompt-input')?.focus(), 30);
-  }).then((v) => v ?? null);
-}
-const tip = document.getElementById('tip');
-document.addEventListener('pointerover', (ev) => { const el = ev.target.closest?.('[data-tip]'); if (el) showTip(el); });
-document.addEventListener('pointerout', (ev) => { if (ev.target.closest?.('[data-tip]')) tip.hidden = true; });
-document.addEventListener('focusin', (ev) => { const el = ev.target.closest?.('[data-tip]'); if (el) showTip(el); else tip.hidden = true; });
-function showTip(el) {
-  tip.textContent = el.dataset.tip; tip.hidden = false;
-  const r = el.getBoundingClientRect(); const tw = tip.offsetWidth; const th = tip.offsetHeight;
-  tip.style.left = `${Math.max(8, Math.min(window.innerWidth - tw - 8, r.left + r.width / 2 - tw / 2))}px`;
-  tip.style.top = `${Math.max(8, r.top - th - 8)}px`;
-}
-
-/* ============================================================
-   Enrutado y render
-   ============================================================ */
-function parseRoute() {
-  const h = location.hash.replace(/^#/, '') || '/';
-  const [path, qs] = h.split('?');
-  return { path, parts: path.split('/').filter(Boolean), q: Object.fromEntries(new URLSearchParams(qs || '')) };
-}
-let renderQueued = false;
-function scheduleRender() {
-  updateSync();
-  if (S.formActive || renderQueued) return;
-  renderQueued = true;
-  requestAnimationFrame(() => { renderQueued = false; if (S.formActive) return; if (S.partial) S.partial(); else render(); });
-}
-function changed() { refreshNames(); scheduleRender(); }
-
-function render() {
-  const { path, parts, q } = parseRoute();
-  const top = parts[0] || '';
-  document.querySelectorAll('.nav a.tab').forEach((a) => {
-    const t = a.dataset.tab;
-    const on = t === top || (t === 'proyectos' && (top === 'proyecto' || top === 'registro'));
-    if (on) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
-  });
-  S.formActive = false; S.partial = null; tip.hidden = true;
-  if (S.mode === 'starting') { view.innerHTML = `<div class="skeleton">${ic('cloud')}<span>Conectando con la bitácora…</span></div>`; return; }
-  if (!S.me) { viewOnboarding(); return; }
-  switch (top) {
-    case '': view.innerHTML = viewPanel(); drawChart(); break;
-    case 'proyectos': view.innerHTML = viewProjects(q); break;
-    case 'proyecto':
-      if (parts[1] === 'nuevo') viewProjectForm(null);
-      else if (parts[2] === 'editar') viewProjectForm(parts[1]);
-      else view.innerHTML = viewProject(parts[1], q);
-      break;
-    case 'registro':
-      if (parts[1] === 'nuevo') viewEntryForm(null, q);
-      else if (parts[2] === 'editar') viewEntryForm(parts[1], q);
-      else view.innerHTML = viewEntry(parts[1]);
-      break;
-    case 'buscar': viewSearch(); break;
-    case 'catalogos': viewCatalogs(q); break;
-    case 'equipo': view.innerHTML = viewTeam(); break;
-    default: view.innerHTML = emptyPage('Página no encontrada', 'Vuelve al panel para continuar.');
-  }
-  if (S.lastPath !== path) { S.lastPath = path; window.scrollTo(0, 0); }
-}
-window.addEventListener('hashchange', render);
-
-function updateSync() {
-  const c = pendingCounts();
-  const n = S.pending.size;
-  let state = 'idle'; let text = 'Conectando…';
-  if (S.mode === 'local') { state = 'pending'; text = 'Solo en este dispositivo'; }
-  else if (S.mode === 'cloud') {
-    if (!S.canWrite) { state = 'idle'; text = 'Solo lectura'; }
-    else if (!S.online) { state = 'offline'; text = `Sin conexión${n ? ` · ${n} pendientes` : ''}`; }
-    else if (n || c.media) { state = 'pending'; text = S.flushing ? 'Sincronizando…' : `${n + c.media} pendientes`; }
-    else { state = 'ok'; text = 'Sincronizado'; }
-  }
-  for (const [pill, txt] of [['sync-pill', 'sync-text'], ['sync-pill-m', 'sync-text-m']]) {
-    const p = document.getElementById(pill); if (p) p.dataset.state = state;
-    const t = document.getElementById(txt); if (t) t.textContent = text;
-  }
-}
-window.addEventListener('online', () => { S.online = true; S.retryMs = 2000; updateSync(); queueFlush(300); });
-window.addEventListener('offline', () => { S.online = false; updateSync(); });
-
-/* ---------- Piezas reutilizables ---------- */
-const emptyPage = (title, msg) => `<div class="page"><div class="empty">${ic('info')}<b>${esc(title)}</b><span>${esc(msg)}</span><a class="btn" href="#/">Ir al panel</a></div></div>`;
-const statusPill = (s) => `<span class="pill ${s}">${esc(PSTATUS[s] || s)}</span>`;
-const pendPill = (col, id) => (S.pending.has(keyOf(col, id)) ? `<span class="pill pend" title="${S.mode === 'local' ? 'Guardado solo en este dispositivo' : 'Se enviará al recuperar la conexión'}">${ic('cloud')}Pendiente</span>` : '');
-const readOnlyBanner = () => (S.mode === 'cloud' && !S.canWrite ? `<div class="banner info">${ic('lock')}<span>Tienes acceso de solo lectura a esta bitácora. Pide a quien la administra acceso para registrar.</span></div>` : '');
-const localBanner = () => (S.mode === 'local' ? `<div class="banner">${ic('info')}<span>Modo sin conexión a la nube: los datos quedan solo en este navegador. Descarga un respaldo desde <a href="#/equipo">Equipo</a>.</span></div>` : '');
-const offlineBanner = () => (S.mode === 'cloud' && !S.online ? `<div class="banner">${ic('wifi-off')}<span>Sin conexión. Puedes seguir registrando: los cambios quedan en este dispositivo y se envían al volver la señal.</span></div>` : '');
-
-function timelineItem(e, { folio, showProject = false, showDate = false } = {}) {
-  const t = ETYPE[e.type] || ETYPE.GENERAL;
-  const photos = (e.attachments || []).filter((a) => a.kind === 'PHOTO');
-  const files = (e.attachments || []).filter((a) => a.kind === 'FILE');
-  const cover = photos[0];
-  const ncom = all('comments').filter((c) => c.entry_id === e.id).length;
-  const sum = entrySummary(e);
-  return `<li class="tl-item" style="--tc:var(${t.v})">
-    <time class="tl-time" datetime="${esc(e.occurred_at)}">${fmtTime(e.occurred_at)}</time>
-    <span class="tl-node" aria-hidden="true"></span>
-    <a class="tl-body" href="#/registro/${esc(e.id)}">
-      <div class="tl-main">
-        <div class="tl-type">${ic(t.icon)}${esc(t.label)}${showDate ? `<span class="muted"> · ${esc(fmtDayShort(e.occurred_at))}</span>` : ''}${folio ? `<span class="folio">${folioTxt(folio)}</span>` : ''}</div>
-        ${sum ? `<div class="tl-sum">${esc(sum)}</div>` : ''}
-        ${e.body ? `<div class="tl-text">${esc(e.body)}</div>` : ''}
-        ${(e.tags || []).length ? `<div class="tags-line">${e.tags.map((x) => '#' + esc(x)).join('  ')}</div>` : ''}
-        <div class="meta">
-          <span>${ic('user')}${esc(nameOf(e.author_id))}</span>
-          ${showProject ? `<span>${ic('brief')}${esc(projectName(e.project_id))}</span>` : ''}
-          ${photos.length ? `<span>${ic('camera')}${photos.length}</span>` : ''}
-          ${files.length ? `<span>${ic('clip')}${files.length}</span>` : ''}
-          ${ncom ? `<span>${ic('msg')}${ncom}</span>` : ''}
-          ${e.lat != null ? `<span title="Con ubicación">${ic('pin')}GPS</span>` : ''}
-          ${pendPill('entries', e.id)}
-        </div>
-      </div>
-      ${cover ? `<img class="thumb" data-media="${esc(cover.id)}" src="${esc(mediaSrc(cover))}" alt="${esc(cover.caption || 'Foto del registro')}" loading="lazy">` : ''}
-    </a></li>`;
-}
-function timeline(entries, opts = {}) {
-  if (!entries.length) return '';
-  const groups = [];
-  for (const e of entries) {
-    const k = dayKey(e.occurred_at);
-    if (!groups.length || groups[groups.length - 1].k !== k) groups.push({ k, items: [] });
-    groups[groups.length - 1].items.push(e);
-  }
-  const fol = opts.projectId ? folios(opts.projectId) : null;
-  return groups.map((g) => {
-    const hours = g.items.reduce((s, e) => s + laborHours(e), 0);
-    return `<section class="day"><header class="day-head"><span class="day-date">${esc(fmtDayShort(g.items[0].occurred_at))}</span>
-      <span class="day-meta">${g.items.length} ${g.items.length === 1 ? 'registro' : 'registros'}${hours ? ` · ${fmtQty(hours)} h-persona` : ''}</span></header>
-      <ol class="tl">${g.items.map((e) => timelineItem(e, { ...opts, folio: fol?.get(e.id) })).join('')}</ol></section>`;
-  }).join('');
-}
-
-/* ============================================================
-   Vistas: bienvenida (modo local)
-   ============================================================ */
-function viewOnboarding() {
-  S.formActive = true;
-  const locals = all('members').filter((m) => m.name);
-  view.innerHTML = `<div class="page narrow">
-    <div class="page-head"><div><p class="eyebrow">Bitácora de Campo</p><h1>¿Quién registra en este dispositivo?</h1></div></div>
-    <div class="banner">${ic('info')}<span>Esta copia funciona sin la nube: los registros quedan en este navegador. Publicada en claude.ai, la bitácora usa tu cuenta y se comparte con tu equipo.</span></div>
-    ${locals.length ? `<div class="card"><h3>Continuar como</h3><div class="chips">${locals.map((m) => `<button class="chip" data-act="switch-user" data-id="${esc(m.id)}">${ic('user')}${esc(m.name)}</button>`).join('')}</div></div>` : ''}
-    <form class="card form" id="onb-form">
-      <label class="field"><span>Nombre completo</span><input id="onb-name" autocomplete="name" placeholder="Ej: María Soto" required></label>
-      <div class="field"><span class="lbl">Rol</span><div class="seg" id="onb-role">${Object.entries(ROLE).map(([k, v]) => `<button type="button" data-act="seg" data-val="${k}" aria-pressed="${k === 'OPERATOR'}">${esc(v)}</button>`).join('')}</div></div>
-      <div class="form-actions"><button class="btn primary" type="submit">${ic('check')}Comenzar</button></div>
-    </form></div>`;
-  document.getElementById('onb-form').onsubmit = async (ev) => {
-    ev.preventDefault();
-    const name = document.getElementById('onb-name').value.trim();
-    if (!name) { toast('Escribe tu nombre: queda como responsable de tus registros.', 'bad'); return; }
-    const role = document.querySelector('#onb-role [aria-pressed="true"]')?.dataset.val || 'OPERATOR';
-    const id = uuid();
-    await save('members', { id, name, role, local: true });
-    await Local.put('meta', 'currentUser', id);
-    S.me = { id }; S.formActive = false; render();
-  };
-}
-
-/* ============================================================
-   Vista: Panel
-   ============================================================ */
-function viewPanel() {
-  const entries = visibleEntries();
-  const today = dayKey(new Date());
-  const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 6); weekAgo.setHours(0, 0, 0, 0);
-  const monthStart = new Date(); monthStart.setDate(1); monthStart.setHours(0, 0, 0, 0);
-  const active = all('projects').filter((p) => p.status === 'ACTIVE');
-  const todayCount = entries.filter((e) => dayKey(e.occurred_at) === today).length;
-  const weekHours = entries.filter((e) => D(e.occurred_at) >= weekAgo).reduce((s, e) => s + laborHours(e), 0);
-  const monthExp = entries.filter((e) => D(e.occurred_at) >= monthStart && e.transaction?.kind === 'EXPENSE');
-  const expCLP = monthExp.filter((e) => e.transaction.currency === 'CLP').reduce((s, e) => s + (Number(e.transaction.amount) || 0), 0);
-  const otherCur = monthExp.some((e) => e.transaction.currency !== 'CLP');
-  const withGps = entries.filter((e) => e.lat != null).slice(0, 5);
-  const firstActive = active.length === 1 ? active[0].id : '';
-  return `<div class="page">
-    <div class="page-head"><div><p class="eyebrow">${esc(cap(fmtDayLong(new Date())))}</p><h1>Panel de faena</h1></div>
-      ${canWrite() ? `<div class="actions"><a class="btn accent" href="#/registro/nuevo${firstActive ? `?proyecto=${firstActive}` : ''}">${ic('plus')}Nuevo registro</a></div>` : ''}</div>
-    ${offlineBanner()}${localBanner()}${readOnlyBanner()}
-    <div class="kpis">
-      <div class="kpi"><span>Proyectos activos</span><b>${active.length}</b><small>de ${all('projects').length} en total</small></div>
-      <div class="kpi"><span>Registros hoy</span><b>${todayCount}</b><small>${entries.length} en la bitácora</small></div>
-      <div class="kpi"><span>Horas-persona</span><b>${fmtQty(weekHours)}</b><small>últimos 7 días</small></div>
-      <div class="kpi"><span>Egresos del mes</span><b class="num">${expCLP >= 1e6 ? fmtNum(expCLP / 1e6, 1) + ' M' : fmtNum(expCLP)}</b><small>CLP${otherCur ? ' · hay egresos en otras monedas' : ''}</small></div>
-    </div>
-    <section class="card">
-      <div class="section-head"><h2>Registros por día</h2><span class="muted">Últimos 14 días, todos los proyectos</span></div>
-      <figure class="chart" id="chart-days" role="img" aria-label="Gráfico de barras de registros por día en los últimos 14 días"></figure>
-      <details class="data"><summary>Ver datos en tabla</summary><div class="table-wrap" id="chart-table"></div></details>
-    </section>
-    <div class="grid-2">
-      <section class="section">
-        <div class="section-head"><h2>Proyectos activos</h2><a href="#/proyectos">Ver todos</a></div>
-        ${active.length ? `<div class="plist">${active.map(projectCard).join('')}</div>` : `<div class="empty">${ic('brief')}<b>Sin proyectos activos</b>${canWrite() ? '<a class="btn" href="#/proyecto/nuevo">Crear proyecto</a>' : ''}</div>`}
-      </section>
-      <section class="section">
-        <div class="section-head"><h2>Últimas ubicaciones</h2></div>
-        <div class="card">${withGps.length ? `<table class="t"><tbody>${withGps.map((e) => `<tr>
-          <td><a href="#/registro/${esc(e.id)}">${esc(projectName(e.project_id))}</a><div class="muted" style="font-size:12.5px">${esc(fmtDayShort(e.occurred_at))} ${fmtTime(e.occurred_at)} · ${esc(ETYPE[e.type].label)}</div></td>
-          <td class="r"><a class="mono" href="${mapsUrl(e.lat, e.lng)}" target="_blank" rel="noopener">${esc(fmtCoords(e.lat, e.lng))}</a></td></tr>`).join('')}</tbody></table>
-          <p class="muted" style="font-size:12.5px">Cada coordenada abre Google Maps en una pestaña nueva.</p>` : `<p class="muted">Aún no hay registros con GPS.</p>`}</div>
-      </section>
-    </div>
-    <section class="section">
-      <div class="section-head"><h2>Actividad reciente</h2><a href="#/buscar">Buscar en la bitácora</a></div>
-      ${entries.length ? timeline(entries.slice(0, 8), { showProject: true }) : `<div class="empty">${ic('note')}<b>La bitácora está vacía</b><span>Crea un proyecto y registra la primera actividad del día.</span></div>`}
-    </section>
-  </div>`;
-}
-function projectCard(p) {
-  const es = all('entries').filter((e) => e.project_id === p.id);
-  const last = es.reduce((m, e) => (e.occurred_at > m ? e.occurred_at : m), '');
-  return `<a class="pcard" href="#/proyecto/${esc(p.id)}">
-    <div class="row"><h3>${esc(p.name)}</h3>${statusPill(p.status)}</div>
-    <div class="meta">${p.code ? `<span class="mono">${esc(p.code)}</span>` : ''}${p.client_name ? `<span>${esc(p.client_name)}</span>` : ''}
-      <span>${ic('note')}${es.length} ${es.length === 1 ? 'registro' : 'registros'}</span>
-      ${last ? `<span>${ic('cal')}último ${esc(fmtDayShort(last))}</span>` : ''}${pendPill('projects', p.id)}</div></a>`;
-}
-function drawChart() {
-  const el = document.getElementById('chart-days');
-  if (!el) return;
-  const entries = visibleEntries();
-  const days = [];
-  for (let i = 13; i >= 0; i--) {
-    const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - i);
-    const k = dayKey(d);
-    const es = entries.filter((e) => dayKey(e.occurred_at) === k);
-    days.push({ d, k, n: es.length, h: es.reduce((s, e) => s + laborHours(e), 0) });
-  }
-  const W = Math.max(300, Math.round(el.clientWidth || 600)); const H = 190;
-  const pl = 30, pr = 6, pt = 22, pb = 26;
-  const max = Math.max(1, ...days.map((x) => x.n));
-  const step = Math.max(1, Math.ceil(max / 3)); const top = step * 3;
-  const pw = W - pl - pr, ph = H - pt - pb, col = pw / days.length;
-  const bw = Math.min(28, Math.max(5, col * 0.62));
-  const y = (v) => pt + ph - (v / top) * ph;
-  const every = col < 30 ? 2 : 1;
-  const maxIdx = days.reduce((bi, x, i) => (x.n > days[bi].n ? i : bi), 0);
-  let svg = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">`;
-  for (let v = 0; v <= top; v += step) {
-    svg += `<line class="${v === 0 ? 'base' : 'grid'}" x1="${pl}" x2="${W - pr}" y1="${y(v)}" y2="${y(v)}"/><text class="axis" x="${pl - 6}" y="${y(v) + 4}" text-anchor="end">${v}</text>`;
-  }
-  days.forEach((x, i) => {
-    const cx = pl + col * i + col / 2; const bx = cx - bw / 2; const by = y(x.n); const bh = pt + ph - by;
-    const r = Math.min(4, bw / 2, bh);
-    const label = `${cap(fmtDayShort(x.d))}: ${x.n} ${x.n === 1 ? 'registro' : 'registros'}${x.h ? ` · ${fmtQty(x.h)} h-persona` : ''}`;
-    svg += `<g class="col" tabindex="0" data-tip="${esc(label)}" aria-label="${esc(label)}"><rect class="hit" x="${pl + col * i}" y="${pt}" width="${col}" height="${ph + pb}"/>`;
-    if (x.n > 0) svg += `<path class="bar" d="M${bx},${pt + ph} V${by + r} Q${bx},${by} ${bx + r},${by} H${bx + bw - r} Q${bx + bw},${by} ${bx + bw},${by + r} V${pt + ph} Z"/>`;
-    if (x.n > 0 && (i === days.length - 1 || i === maxIdx)) svg += `<text class="val" x="${cx}" y="${by - 6}" text-anchor="middle">${x.n}</text>`;
-    if (i % every === (days.length - 1) % every) svg += `<text class="axis" x="${cx}" y="${H - 8}" text-anchor="middle">${i === days.length - 1 ? 'hoy' : x.d.getDate()}</text>`;
-    svg += '</g>';
-  });
-  el.innerHTML = svg + '</svg>';
-  const tbl = document.getElementById('chart-table');
-  if (tbl) tbl.innerHTML = `<table class="t"><thead><tr><th>Día</th><th class="r">Registros</th><th class="r">Horas-persona</th></tr></thead><tbody>${days.map((x) => `<tr><td>${esc(cap(fmtDayShort(x.d)))}</td><td class="r">${x.n}</td><td class="r">${fmtQty(x.h)}</td></tr>`).join('')}</tbody></table>`;
-}
-let resizeTimer = null;
-window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(drawChart, 150); });
-
-/* ============================================================
-   Vistas: Proyectos
-   ============================================================ */
-function viewProjects(q) {
-  const st = PSTATUS[q.estado] ? q.estado : '';
-  const order = { ACTIVE: 0, PLANNED: 1, ON_HOLD: 2, CLOSED: 3 };
-  const list = all('projects').filter((p) => !st || p.status === st).sort((a, b) => order[a.status] - order[b.status] || a.name.localeCompare(b.name, 'es'));
-  return `<div class="page">
-    <div class="page-head"><div><p class="eyebrow">Obras y faenas</p><h1>Proyectos</h1></div>
-      ${canWrite() ? `<div class="actions"><a class="btn primary" href="#/proyecto/nuevo">${ic('plus')}Nuevo proyecto</a></div>` : ''}</div>
-    ${readOnlyBanner()}
-    <div class="chips" role="group" aria-label="Filtrar por estado">
-      <a class="chip ${!st ? 'on' : ''}" href="#/proyectos">Todos</a>
-      ${Object.entries(PSTATUS).map(([k, v]) => `<a class="chip ${st === k ? 'on' : ''}" href="#/proyectos?estado=${k}">${esc(v)}</a>`).join('')}
-    </div>
-    ${list.length ? `<div class="plist">${list.map(projectCard).join('')}</div>` : `<div class="empty">${ic('brief')}<b>${st ? 'No hay proyectos con este estado' : 'Aún no hay proyectos'}</b><span>Cada registro de bitácora pertenece a un proyecto.</span></div>`}
-  </div>`;
-}
-
-function viewProject(id, q) {
-  const p = live('projects', id);
-  if (!p) return emptyPage('Proyecto no encontrado', 'Puede haber sido eliminado.');
-  const tf = ETYPE[q.tipo] ? q.tipo : '';
-  const entries = visibleEntries().filter((e) => e.project_id === id && (!tf || e.type === tf));
-  const sm = projectSummary(id);
-  const exp = sm.money.filter((m) => m.kind === 'EXPENSE'); const inc = sm.money.filter((m) => m.kind === 'INCOME');
-  return `<div class="page">
-    <div class="page-head"><div><p class="eyebrow"><a href="#/proyectos">Proyectos</a>${p.code ? ` · <span class="mono">${esc(p.code)}</span>` : ''}</p><h1>${esc(p.name)}</h1></div>
-      <div class="actions">${canEditProject(p) ? `<a class="btn" href="#/proyecto/${esc(p.id)}/editar">${ic('edit')}Editar</a>` : ''}
-      ${canWrite() ? `<a class="btn accent" href="#/registro/nuevo?proyecto=${esc(p.id)}${tf ? `&tipo=${tf}` : ''}">${ic('plus')}Nuevo registro</a>` : ''}</div></div>
-    ${offlineBanner()}
-    <div class="grid-2">
-      <section class="card">
-        <dl class="dl">
-          <dt>Estado</dt><dd>${statusPill(p.status)} ${pendPill('projects', p.id)}</dd>
-          ${p.client_name ? `<dt>Cliente</dt><dd>${esc(p.client_name)}</dd>` : ''}
-          <dt>Período</dt><dd>${esc(fmtDateOnly(p.start_date))} a ${p.end_date ? esc(fmtDateOnly(p.end_date)) : 'en curso'}</dd>
-          ${p.address ? `<dt>Sector</dt><dd>${esc(p.address)}</dd>` : ''}
-          ${p.lat != null ? `<dt>Ubicación</dt><dd><a class="mono" href="${mapsUrl(p.lat, p.lng)}" target="_blank" rel="noopener">${esc(fmtCoords(p.lat, p.lng))}</a></dd>` : ''}
-        </dl>
-        ${p.description ? `<p>${esc(p.description)}</p>` : ''}
-      </section>
-      <section class="card">
-        <div class="section-head"><h2>Resumen</h2>
-          <div class="actions"><button class="btn sm" data-act="export-pdf" data-scope="project" data-id="${esc(p.id)}">${ic('file')}PDF</button><button class="btn sm" data-act="export-csv" data-scope="project" data-id="${esc(p.id)}">${ic('sheet')}Excel</button></div></div>
-        <div class="grid-3">
-          <div class="kpi"><span>Registros</span><b>${sm.total}</b></div>
-          <div class="kpi"><span>Horas-persona</span><b>${fmtQty(sm.hours)}</b></div>
-          <div class="kpi"><span>Ítems movidos</span><b>${sm.stock.length}</b></div>
-        </div>
-        ${exp.length || inc.length ? `<dl class="dl">${exp.map((m) => `<dt>Egresos ${esc(m.currency)}</dt><dd class="num">${esc(fmtMoney(m.total, m.currency))}</dd>`).join('')}${inc.map((m) => `<dt>Ingresos ${esc(m.currency)}</dt><dd class="num">${esc(fmtMoney(m.total, m.currency))}</dd>`).join('')}</dl>` : ''}
-      </section>
-    </div>
-    ${sm.stock.length ? `<section class="card"><h2>Saldo de stock</h2><div class="table-wrap"><table class="t"><thead><tr><th>Ítem</th><th class="r">Entradas</th><th class="r">Salidas</th><th class="r">Saldo</th></tr></thead><tbody>
-      ${sm.stock.map((s) => `<tr><td>${esc(s.name)}</td><td class="r">${fmtQty(s.in)} ${esc(s.unit)}</td><td class="r">${fmtQty(s.out)} ${esc(s.unit)}</td><td class="r"><b>${fmtQty(s.in - s.out)}</b> ${esc(s.unit)}</td></tr>`).join('')}</tbody></table></div></section>` : ''}
-    <section class="section">
-      <div class="section-head"><h2>Línea de tiempo</h2></div>
-      <div class="chips" role="group" aria-label="Filtrar por tipo">
-        <a class="chip ${!tf ? 'on' : ''}" href="#/proyecto/${esc(p.id)}">Todos</a>
-        ${Object.entries(ETYPE).map(([k, t]) => `<a class="chip ${tf === k ? 'on' : ''}" style="--tc:var(${t.v})" href="#/proyecto/${esc(p.id)}?tipo=${k}"><span class="sw"></span>${esc(t.label)} <span class="muted">${sm.counts[k] || 0}</span></a>`).join('')}
-      </div>
-      ${entries.length ? timeline(entries, { projectId: p.id }) : `<div class="empty">${ic('note')}<b>Sin registros${tf ? ' de este tipo' : ''}</b><span>Usa «Nuevo registro» para agregar la primera entrada.</span></div>`}
-    </section>
-  </div>`;
-}
-
-let PF = null;
-function viewProjectForm(id) {
-  const p = id ? live('projects', id) : null;
-  if (id && !p) { view.innerHTML = emptyPage('Proyecto no encontrado', ''); return; }
-  if (p ? !canEditProject(p) : !canWrite()) { view.innerHTML = emptyPage('Sin permiso', 'Solo supervisión, administración o quien creó el proyecto puede editarlo.'); return; }
-  S.formActive = true;
-  PF = { id: p?.id || uuid(), prev: p, status: p?.status || 'ACTIVE', loc: p?.lat != null ? { lat: p.lat, lng: p.lng } : null };
-  const v = (k) => esc(p?.[k] ?? '');
-  view.innerHTML = `<div class="page narrow">
-    <div class="page-head"><div><p class="eyebrow"><a href="${p ? `#/proyecto/${esc(p.id)}` : '#/proyectos'}">${p ? esc(p.name) : 'Proyectos'}</a></p><h1>${p ? 'Editar proyecto' : 'Nuevo proyecto'}</h1></div></div>
-    <form class="card form" id="project-form" novalidate>
-      <label class="field"><span>Nombre del proyecto</span><input id="p-name" value="${v('name')}" placeholder="Ej: Mantención correa CV-12" required></label>
-      <div class="grid-2">
-        <label class="field"><span>Código / OT</span><input id="p-code" value="${v('code')}" placeholder="OT-2026-041"></label>
-        <label class="field"><span>Cliente o área mandante</span><input id="p-client" value="${v('client_name')}"></label>
-      </div>
-      <div class="field"><span class="lbl">Estado</span><div class="seg" id="p-status" style="flex-wrap:wrap">${Object.entries(PSTATUS).map(([k, t]) => `<button type="button" data-act="seg" data-val="${k}" aria-pressed="${PF.status === k}">${esc(t)}</button>`).join('')}</div></div>
-      <div class="grid-2">
-        <label class="field"><span>Inicio</span><input type="date" id="p-start" value="${v('start_date')}"></label>
-        <label class="field"><span>Término</span><input type="date" id="p-end" value="${v('end_date')}"></label>
-      </div>
-      <label class="field"><span>Dirección / sector</span><input id="p-address" value="${v('address')}" placeholder="Ej: Planta concentradora, nivel 3"></label>
-      <div id="p-loc">${locBlock(PF.loc, 'p')}</div>
-      <label class="field"><span>Descripción</span><textarea id="p-desc" placeholder="Alcance, observaciones…">${v('description')}</textarea></label>
-      <div class="form-actions">
-        ${p && canEditProject(p) ? `<button type="button" class="btn danger" data-act="delete-project" data-id="${esc(p.id)}">${ic('trash')}Eliminar</button><span style="flex:1"></span>` : ''}
-        <a class="btn ghost" href="${p ? `#/proyecto/${esc(p.id)}` : '#/proyectos'}">Cancelar</a>
-        <button class="btn primary" type="submit">${ic('check')}${p ? 'Guardar cambios' : 'Crear proyecto'}</button>
-      </div>
-    </form></div>`;
-  document.getElementById('project-form').onsubmit = async (ev) => {
-    ev.preventDefault();
-    const val = (id2) => document.getElementById(id2).value.trim();
-    const name = val('p-name');
-    if (!name) { toast('El nombre del proyecto es obligatorio.', 'bad'); document.getElementById('p-name').focus(); return; }
-    const start = val('p-start') || null; const end = val('p-end') || null;
-    if (start && end && end < start) { toast('La fecha de término no puede ser anterior al inicio.', 'bad'); return; }
-    const status = document.querySelector('#p-status [aria-pressed="true"]')?.dataset.val || 'ACTIVE';
-    await save('projects', {
-      ...(PF.prev || {}), id: PF.id, name, code: val('p-code') || null, client_name: val('p-client') || null, status,
-      start_date: start, end_date: end, address: val('p-address') || null, description: val('p-desc') || null,
-      lat: PF.loc?.lat ?? null, lng: PF.loc?.lng ?? null, created_by: PF.prev?.created_by || S.me.id,
-    });
-    S.formActive = false;
-    toast(PF.prev ? 'Proyecto actualizado' : 'Proyecto creado');
-    location.hash = `#/proyecto/${PF.id}`;
-  };
-}
-
-/* ---------- Ubicación (formularios) ---------- */
-function locBlock(loc, ns, busy = false, msg = '') {
-  return `<div class="field"><span class="lbl">${ns === 'p' ? 'Ubicación del proyecto' : 'Ubicación'}</span>
-    <div class="loc-box ${loc ? 'has' : ''}">${ic('pin')}<div>${busy ? 'Obteniendo ubicación…'
-      : loc ? `<a class="mono" href="${mapsUrl(loc.lat, loc.lng)}" target="_blank" rel="noopener">${esc(fmtCoords(loc.lat, loc.lng))}</a>${loc.acc != null ? `<div class="muted" style="font-size:12.5px">Precisión ± ${fmtNum(loc.acc)} m</div>` : ''}`
-      : '<span class="muted">Sin ubicación</span>'}</div></div>
-    ${msg ? `<small class="hint" style="color:var(--warn)">${esc(msg)}</small>` : ''}
-    <div class="actions"><button type="button" class="btn sm" data-act="gps" data-ns="${ns}" ${busy ? 'disabled' : ''}>${ic('locate')}${loc ? 'Actualizar GPS' : 'Capturar GPS'}</button>
-      <button type="button" class="btn sm ghost" data-act="manual-loc" data-ns="${ns}">Ingresar coordenadas</button>
-      ${loc ? `<button type="button" class="btn sm ghost" data-act="clear-loc" data-ns="${ns}">${ic('x')}Quitar</button>` : ''}</div></div>`;
-}
-function setLoc(ns, loc, busy = false, msg = '') {
-  if (ns === 'p') { if (!PF) return; PF.loc = loc; document.getElementById('p-loc').innerHTML = locBlock(loc, 'p', busy, msg); }
-  else { if (!F) return; F.loc = loc; F.locBusy = busy; F.locMsg = msg; const el = document.getElementById('f-loc'); if (el) el.innerHTML = locBlock(loc, 'f', busy, msg); }
-}
-function captureGps(ns) {
-  const token = ns === 'p' ? PF : F;
-  const cur = ns === 'p' ? PF?.loc : F?.loc;
-  if (!navigator.geolocation) { setLoc(ns, cur, false, 'Este navegador no entrega ubicación. Ingresa las coordenadas a mano.'); return; }
-  setLoc(ns, cur, true);
-  navigator.geolocation.getCurrentPosition(
-    (pos) => { if ((ns === 'p' ? PF : F) !== token) return; setLoc(ns, { lat: pos.coords.latitude, lng: pos.coords.longitude, acc: Math.round(pos.coords.accuracy) }); },
-    (err) => {
-      if ((ns === 'p' ? PF : F) !== token) return;
-      setLoc(ns, cur, false, err.code === 1
-        ? 'El navegador no dio permiso de ubicación. Actívalo o ingresa las coordenadas a mano.'
-        : 'Sin señal GPS por ahora. Puedes guardar igual o ingresar las coordenadas a mano.');
-    },
-    { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 },
-  );
-}
-async function manualLoc(ns) {
-  const v = await promptBox({ title: 'Coordenadas', label: 'Latitud, longitud', hint: 'Ejemplo: -22.45600, -68.92900 (puedes copiarlas desde Google Maps)', ok: 'Usar' });
-  if (!v) return;
-  const nums = v.replace(/[;]/g, ',').match(/-?\d+(?:\.\d+)?/g);
-  const lat = nums ? Number(nums[0]) : NaN; const lng = nums ? Number(nums[1]) : NaN;
-  if (!(Math.abs(lat) <= 90 && Math.abs(lng) <= 180)) { toast('No reconocí las coordenadas. Usa el formato -22.456, -68.929', 'bad'); return; }
-  setLoc(ns, { lat, lng, acc: null });
-}
-
-/* ============================================================
-   Vista: formulario de registro
-   ============================================================ */
-let F = null;
-const blankLabor = () => ({ id: uuid(), worker_id: '', task: '', hours: '' });
-const blankStock = () => ({ id: uuid(), item_id: '', direction: 'IN', quantity: '', responsible_id: '' });
-const blankTx = () => ({ kind: 'EXPENSE', amount: '', currency: 'CLP', concept: '', document_number: '' });
-
-function catOptions(kind, selected, { placeholder = 'Seleccionar…', none = '' } = {}) {
-  const def = CATDEF[kind];
-  const rows = all(kind).sort((a, b) => def.title(a).localeCompare(def.title(b), 'es'));
-  if (selected && !rows.some((r) => r.id === selected)) { const r = byId(kind, selected); if (r) rows.unshift(r); }
-  return (none ? `<option value="">${esc(none)}</option>` : `<option value="" disabled ${selected ? '' : 'selected'}>${esc(placeholder)}</option>`)
-    + rows.map((r) => `<option value="${esc(r.id)}" ${r.id === selected ? 'selected' : ''}>${esc(def.title(r))}</option>`).join('')
-    + (canWrite() ? `<option value="__new__">+ Agregar ${def.single}…</option>` : '');
-}
-
-function viewEntryForm(id, q = {}) {
-  const e = id ? live('entries', id) : null;
-  if (id && !e) { view.innerHTML = emptyPage('Registro no encontrado', ''); return; }
-  if (e && !canEditEntry(e)) { view.innerHTML = emptyPage('Edición bloqueada', `Un operador puede editar sus registros durante ${EDIT_WINDOW_H} horas. Pide a supervisión el cambio o agrega un comentario.`); return; }
-  if (!canWrite()) { view.innerHTML = emptyPage('Solo lectura', 'Tu acceso no permite crear registros.'); return; }
-  const projects = all('projects').sort((a, b) => a.name.localeCompare(b.name, 'es'));
-  if (!projects.length) { view.innerHTML = `<div class="page narrow"><div class="empty">${ic('brief')}<b>Primero crea un proyecto</b><span>Cada registro pertenece a un proyecto.</span><a class="btn primary" href="#/proyecto/nuevo">Crear proyecto</a></div></div>`; return; }
-  S.formActive = true;
-  const active = projects.filter((p) => p.status === 'ACTIVE');
-  F = e ? {
-    id: e.id, isEdit: true, prev: e, project_id: e.project_id, type: e.type, occurred: new Date(e.occurred_at), body: e.body || '',
-    supplier_id: e.supplier_id || '', tags: [...(e.tags || [])], loc: e.lat != null ? { lat: e.lat, lng: e.lng, acc: e.accuracy_m } : null,
-    labor: (e.labor?.length ? e.labor : [blankLabor()]).map((l) => ({ ...l, worker_id: l.worker_id || '', hours: l.hours != null && l.hours !== '' ? fmtQty(Number(l.hours)) : '' })),
-    stock: (e.stock?.length ? e.stock : [blankStock()]).map((l) => ({ ...l, item_id: l.item_id || '', responsible_id: l.responsible_id || '', quantity: l.quantity != null && l.quantity !== '' ? fmtQty(Number(l.quantity)) : '' })),
-    tx: e.transaction ? { ...e.transaction, amount: fmtNum(e.transaction.amount, e.transaction.currency === 'CLP' ? 0 : 2), document_number: e.transaction.document_number || '' } : blankTx(),
-    atts: (e.attachments || []).map((a) => ({ ...a })), newBlobs: new Map(),
-  } : {
-    id: uuid(), isEdit: false, project_id: live('projects', q.proyecto) ? q.proyecto : active.length === 1 ? active[0].id : '',
-    type: ETYPE[q.tipo] ? q.tipo : 'GENERAL', occurred: new Date(), body: '', supplier_id: '', tags: [], loc: null,
-    labor: [blankLabor()], stock: [blankStock()], tx: blankTx(), atts: [], newBlobs: new Map(),
-  };
-  const back = F.isEdit ? `#/registro/${F.id}` : F.project_id ? `#/proyecto/${F.project_id}` : '#/';
-  view.innerHTML = `<div class="page narrow">
-    <div class="page-head"><div><p class="eyebrow">${F.isEdit ? esc(projectName(F.project_id)) : 'Bitácora'}</p><h1>${F.isEdit ? 'Editar registro' : 'Nuevo registro'}</h1></div></div>
-    ${offlineBanner()}
-    <form class="form" id="entry-form" novalidate>
-      ${F.isEdit ? '' : `<div class="field"><span class="lbl">Tipo de registro</span><div class="type-pick" id="f-types">${typeButtons()}</div></div>`}
-      <div class="grid-2">
-        <label class="field"><span>Proyecto</span><select id="f-project" data-f="project_id">
-          <option value="" disabled ${F.project_id ? '' : 'selected'}>Seleccionar proyecto…</option>
-          ${projects.map((p) => `<option value="${esc(p.id)}" ${p.id === F.project_id ? 'selected' : ''}>${esc(p.name)}${p.status !== 'ACTIVE' ? ` (${esc(PSTATUS[p.status])})` : ''}</option>`).join('')}</select></label>
-        <label class="field"><span>Fecha y hora</span><input type="datetime-local" id="f-when" data-f="occurred" value="${toLocalInput(F.occurred)}"></label>
-      </div>
-      <div id="f-typed">${typedSection()}</div>
-      <label class="field"><span id="f-body-label">${F.type === 'GENERAL' ? 'Descripción' : 'Observaciones'}</span><textarea id="f-body" data-f="body" placeholder="¿Qué pasó en terreno?">${esc(F.body)}</textarea></label>
-      <div class="grid-2">
-        <label class="field"><span>Proveedor asociado</span><select id="f-supplier" data-f="supplier_id" data-new="suppliers" data-none="Sin proveedor">${catOptions('suppliers', F.supplier_id, { none: 'Sin proveedor' })}</select></label>
-        <div id="f-tags">${tagsSection()}</div>
-      </div>
-      <div id="f-loc">${locBlock(F.loc, 'f')}</div>
-      <div id="f-atts">${attsSection()}</div>
-      <div class="form-actions"><a class="btn ghost" href="${back}">Cancelar</a><button class="btn primary" type="submit">${ic('check')}${F.isEdit ? 'Guardar cambios' : 'Guardar registro'}</button></div>
-    </form></div>`;
-  document.getElementById('entry-form').onsubmit = (ev) => { ev.preventDefault(); saveEntryForm(); };
-  if (!F.isEdit) captureGps('f');
-}
-const typeButtons = () => Object.entries(ETYPE).map(([k, t]) => `<button type="button" style="--tc:var(${t.v})" data-act="f-type" data-val="${k}" aria-pressed="${F.type === k}">${ic(t.icon)}${esc(t.label)}</button>`).join('');
-
-function typedSection() {
-  if (F.type === 'LABOR') {
-    return `<fieldset class="group"><legend>Personal y horas</legend>
-      ${F.labor.map((l, i) => `<div class="line"><div class="line-head"><span>Persona ${i + 1}</span>${F.labor.length > 1 ? `<button type="button" class="icon-btn" data-act="f-del-line" data-list="labor" data-id="${l.id}" aria-label="Quitar persona ${i + 1}">${ic('trash')}</button>` : ''}</div>
-        <div class="line-grid labor">
-          <label class="field"><span>Quién</span><select id="lw-${l.id}" data-f="labor.${l.id}.worker_id" data-new="workers">${catOptions('workers', l.worker_id, { placeholder: 'Seleccionar persona…' })}</select></label>
-          <label class="field task"><span>Tarea</span><input id="lt-${l.id}" data-f="labor.${l.id}.task" value="${esc(l.task)}" placeholder="Tarea realizada"></label>
-          <label class="field"><span>Horas</span><input id="lh-${l.id}" data-f="labor.${l.id}.hours" value="${esc(l.hours)}" inputmode="decimal" placeholder="8"></label>
-        </div></div>`).join('')}
-      <div><button type="button" class="btn sm ghost" data-act="f-add-line" data-list="labor">${ic('plus')}Agregar persona</button></div></fieldset>`;
-  }
-  if (F.type === 'STOCK') {
-    return `<fieldset class="group"><legend>Movimientos de stock / activos</legend>
-      ${F.stock.map((l, i) => {
-        const unit = byId('items', l.item_id)?.unit || '';
-        return `<div class="line"><div class="line-head"><span>Ítem ${i + 1}</span>${F.stock.length > 1 ? `<button type="button" class="icon-btn" data-act="f-del-line" data-list="stock" data-id="${l.id}" aria-label="Quitar ítem ${i + 1}">${ic('trash')}</button>` : ''}</div>
-        <div class="line-grid stock">
-          <label class="field item"><span>Ítem</span><select id="si-${l.id}" data-f="stock.${l.id}.item_id" data-new="items">${catOptions('items', l.item_id, { placeholder: 'Seleccionar ítem…' })}</select></label>
-          <div class="field"><span class="lbl">Movimiento</span><div class="seg"><button type="button" data-act="f-dir" data-id="${l.id}" data-val="IN" aria-pressed="${l.direction === 'IN'}">${ic('in')}Entrada</button><button type="button" data-act="f-dir" data-id="${l.id}" data-val="OUT" aria-pressed="${l.direction === 'OUT'}">${ic('out')}Salida</button></div></div>
-          <label class="field"><span>Cantidad${unit ? ` (${esc(unit)})` : ''}</span><input id="sq-${l.id}" data-f="stock.${l.id}.quantity" value="${esc(l.quantity)}" inputmode="decimal" placeholder="0"></label>
-          <label class="field resp"><span>Responsable</span><select id="sr-${l.id}" data-f="stock.${l.id}.responsible_id" data-new="workers" data-none="Sin responsable">${catOptions('workers', l.responsible_id, { none: 'Sin responsable' })}</select></label>
-        </div></div>`;
-      }).join('')}
-      <div><button type="button" class="btn sm ghost" data-act="f-add-line" data-list="stock">${ic('plus')}Agregar ítem</button></div></fieldset>`;
-  }
-  if (F.type === 'TRANSACTION') {
-    return `<fieldset class="group"><legend>Ingreso / egreso</legend>
-      <div class="seg"><button type="button" data-act="f-kind" data-val="EXPENSE" aria-pressed="${F.tx.kind === 'EXPENSE'}">${ic('out')}Egreso</button><button type="button" data-act="f-kind" data-val="INCOME" aria-pressed="${F.tx.kind === 'INCOME'}">${ic('in')}Ingreso</button></div>
-      <div class="grid-2">
-        <label class="field"><span>Monto</span><input id="tx-amount" data-f="tx.amount" value="${esc(F.tx.amount)}" inputmode="decimal" placeholder="Ej: 150.000"></label>
-        <div class="field"><span class="lbl">Moneda</span><div class="seg">${CURRENCIES.map((c) => `<button type="button" data-act="f-cur" data-val="${c}" aria-pressed="${F.tx.currency === c}">${c}</button>`).join('')}</div></div>
-      </div>
-      <label class="field"><span>Concepto</span><input id="tx-concept" data-f="tx.concept" value="${esc(F.tx.concept)}" placeholder="Ej: Arriendo de grúa"></label>
-      <label class="field"><span>N° de documento</span><input id="tx-doc" data-f="tx.document_number" value="${esc(F.tx.document_number)}" placeholder="Factura, boleta, OC…"></label>
-    </fieldset>`;
-  }
-  return '';
-}
-function tagsSection() {
-  const q = normTag(document.getElementById('f-tag-input')?.value || '');
-  const sugg = allTags().filter((t) => !F.tags.includes(t) && (!q || t.startsWith(q))).slice(0, 8);
-  return `<div class="field"><span class="lbl">Etiquetas</span>
-    ${F.tags.length ? `<div class="chips">${F.tags.map((t) => `<span class="tag">#${esc(t)}<button type="button" data-act="f-tag-del" data-val="${esc(t)}" aria-label="Quitar etiqueta ${esc(t)}">${ic('x')}</button></span>`).join('')}</div>` : ''}
-    <input id="f-tag-input" placeholder="Escribe y presiona Enter" autocomplete="off" autocapitalize="none">
-    <div class="chips" id="f-tag-sugg">${sugg.map((t) => `<button type="button" class="tag sugg" data-act="f-tag-add" data-val="${esc(t)}">+ #${esc(t)}</button>`).join('')}</div></div>`;
-}
-function attsSection() {
-  const photos = F.atts.filter((a) => a.kind === 'PHOTO'); const files = F.atts.filter((a) => a.kind === 'FILE');
-  return `<div class="field"><span class="lbl">Fotos y archivos</span>
-    <div class="actions"><button type="button" class="btn sm" data-act="pick" data-input="in-camera">${ic('camera')}Cámara</button>
-      <button type="button" class="btn sm" data-act="pick" data-input="in-gallery">${ic('image')}Galería</button>
-      <button type="button" class="btn sm" data-act="pick" data-input="in-file">${ic('clip')}Archivo</button></div>
-    ${F.attBusy ? '<small class="hint">Procesando fotos…</small>' : ''}
-    ${photos.length || files.length ? `<ul class="att-list">
-      ${photos.map((a) => `<li class="att"><img data-media="${esc(a.id)}" src="${esc(mediaSrc(a))}" alt="Foto adjunta">
-        <label class="field"><span class="sr">Comentario de la foto</span><textarea id="ac-${a.id}" data-f="att.${a.id}.caption" placeholder="Comentario de la foto">${esc(a.caption || '')}</textarea><small class="hint">${fmtBytes(a.size)}</small></label>
-        <button type="button" class="icon-btn" data-act="f-att-del" data-id="${a.id}" aria-label="Quitar foto">${ic('trash')}</button></li>`).join('')}
-      ${files.map((a) => `<li class="att file"><span class="file-ic">${ic('file')}</span><div><div style="overflow-wrap:anywhere">${esc(a.name)}</div><small class="hint">${fmtBytes(a.size)}</small></div>
-        <button type="button" class="icon-btn" data-act="f-att-del" data-id="${a.id}" aria-label="Quitar archivo">${ic('trash')}</button></li>`).join('')}
-    </ul>` : ''}</div>`;
-}
-const rerender = (id, fn) => { const el = document.getElementById(id); if (el) el.innerHTML = fn(); };
-
-function setF(path, value) {
-  const [a, b, c] = path.split('.');
-  if (a === 'occurred') { if (value) F.occurred = fromLocalInput(value); return; }
-  if (!b) { F[a] = value; return; }
-  if (a === 'tx') { F.tx[b] = value; return; }
-  if (a === 'att') { const x = F.atts.find((t) => t.id === b); if (x) x[c] = value; return; }
-  const line = F[a]?.find((l) => l.id === b); if (line) line[c] = value;
-}
-function getF(path) {
-  const [a, b, c] = path.split('.');
-  if (!b) return F[a];
-  if (a === 'tx') return F.tx[b];
-  return F[a]?.find((l) => l.id === b)?.[c];
-}
-async function quickCreate(kind, name) {
-  return save(kind, { id: uuid(), ...CATDEF[kind].defaults(name) });
-}
-async function handleNewOption(sel) {
-  const kind = sel.dataset.new;
-  const path = sel.dataset.f;
-  const name = await promptBox({ title: `Agregar ${CATDEF[kind].single}`, label: CATDEF[kind].fields[0].l, ok: 'Agregar' });
-  if (!name) { sel.value = getF(path) || ''; return; }
-  const rec = await quickCreate(kind, name);
-  setF(path, rec.id);
-  sel.innerHTML = catOptions(kind, rec.id, sel.dataset.none ? { none: sel.dataset.none } : {});
-  sel.value = rec.id;
-  if (kind === 'items' && F.type === 'STOCK') rerender('f-typed', typedSection);
-  toast(`${cap(CATDEF[kind].single)} agregado al catálogo`);
-}
-
-function validateF() {
-  if (!F.project_id) return 'Selecciona el proyecto.';
-  if (!(F.occurred instanceof Date) || Number.isNaN(F.occurred.getTime())) return 'Revisa la fecha y hora.';
-  if (F.type === 'GENERAL' && !F.body.trim()) return 'Escribe la descripción del registro.';
-  if (F.type === 'LABOR') {
-    for (const [i, l] of F.labor.entries()) {
-      if (!l.worker_id) return `Selecciona la persona ${i + 1}.`;
-      const h = parseDecimal(l.hours);
-      if (h === null || h <= 0 || h > 24) return `Las horas de la persona ${i + 1} deben estar entre 0 y 24.`;
+  /* ---------- Power Automate (SharePoint / OneDrive) ---------- */
+  async function syncFlow(list, c) {
+    for (const r of list) {
+      try {
+        const body = { id: r.id, creado: r.creado, titulo: r.titulo, fecha: r.fecha, responsable: r.responsable, estado: r.estado,
+          prioridad: r.prioridad, descripcion: r.descripcion,
+          imagenNombre: r.imagen ? `${r.id}.jpg` : "", imagenTipo: r.imagen ? "image/jpeg" : "",
+          imagenBase64: r.imagen ? await blobToB64(r.imagen) : "" };
+        const opt = { method: "POST", headers: { "Content-Type": "text/plain;charset=UTF-8" }, body: JSON.stringify(body) };
+        if (c.noCors) opt.mode = "no-cors";
+        const resp = await fetch(c.flowUrl, opt);
+        if (!c.noCors && !resp.ok) throw new Error("El flujo respondió " + resp.status);
+        r.sync = "synced"; r.syncError = ""; r.syncedAt = new Date().toISOString(); await dbPut(r);
+      } catch (e) {
+        if (e instanceof TypeError) throw new Error("Sin conexión, o el flujo no devolvió cabecera CORS (agrega la acción Response o activa «No verificar la respuesta»).");
+        r.sync = "error"; r.syncError = e.message; await dbPut(r);
+      }
     }
   }
-  if (F.type === 'STOCK') {
-    for (const [i, l] of F.stock.entries()) {
-      if (!l.item_id) return `Selecciona el ítem ${i + 1}.`;
-      const qn = parseDecimal(l.quantity);
-      if (qn === null || qn <= 0) return `La cantidad del ítem ${i + 1} debe ser mayor que 0.`;
-    }
-  }
-  if (F.type === 'TRANSACTION') {
-    const amt = parseDecimal(F.tx.amount);
-    if (amt === null || amt < 0) return 'Ingresa un monto válido.';
-    if (!F.tx.concept.trim()) return 'Ingresa el concepto.';
-  }
-  return null;
-}
-async function saveEntryForm() {
-  const pendingTag = document.getElementById('f-tag-input')?.value;
-  if (pendingTag && normTag(pendingTag)) { const t = normTag(pendingTag); if (!F.tags.includes(t)) F.tags.push(t); }
-  const err = validateF();
-  if (err) { toast(err, 'bad'); return; }
-  const prev = F.prev;
-  const doc = {
-    ...(prev || {}),
-    id: F.id, project_id: F.project_id, type: F.type, occurred_at: F.occurred.toISOString(),
-    author_id: prev?.author_id || S.me.id, body: F.body.trim(), supplier_id: F.supplier_id || null,
-    tags: [...new Set(F.tags.map(normTag).filter(Boolean))],
-    lat: F.loc?.lat ?? null, lng: F.loc?.lng ?? null, accuracy_m: F.loc?.acc ?? null,
-    labor: F.type === 'LABOR' ? F.labor.map((l) => ({ id: l.id, worker_id: l.worker_id, task: (l.task || '').trim(), hours: parseDecimal(l.hours) })) : [],
-    stock: F.type === 'STOCK' ? F.stock.map((l) => ({ id: l.id, item_id: l.item_id, direction: l.direction, quantity: parseDecimal(l.quantity), responsible_id: l.responsible_id || null })) : [],
-    transaction: F.type === 'TRANSACTION' ? { kind: F.tx.kind, amount: parseDecimal(F.tx.amount), currency: F.tx.currency, concept: F.tx.concept.trim(), document_number: (F.tx.document_number || '').trim() || null } : null,
-    attachments: F.atts.map(({ previewUrl, isNew, ...a }) => a),
-  };
-  for (const a of F.atts) {
-    if (!a.isNew) continue;
-    await Local.put('blobs', a.id, { id: a.id, entryId: F.id, blob: F.newBlobs.get(a.id), mime: a.mime, name: a.name, state: 'pending' });
-    if (a.previewUrl) S.mediaUrls.set(a.id, a.previewUrl);
-  }
-  if (prev) {
-    for (const a of prev.attachments || []) {
-      if (F.atts.some((x) => x.id === a.id)) continue;
-      Local.del('blobs', a.id);
-      if (a.media && S.db) S.db.doc(`media/${a.id}`).delete().catch(() => {});
-    }
-  }
-  const wasEdit = F.isEdit; const id = F.id;
-  await save('entries', doc);
-  S.formActive = false; F = null;
-  toast(wasEdit ? 'Cambios guardados' : 'Registro guardado');
-  location.hash = `#/registro/${id}`;
-}
-async function addPhotos(files) {
-  if (!F) return;
-  F.attBusy = true; rerender('f-atts', attsSection);
-  for (const file of files) {
+
+  /* ---------- motor de sincronización ---------- */
+  async function syncAll(manual) {
+    if (syncing) return;
+    if (!navigator.onLine) { if (manual) toast("Sin conexión: se enviará cuando haya red."); return; }
+    const c = getCfg(), ce = cfgError(c);
+    const pend = (await dbAll()).filter(r => r.sync !== "synced");
+    if (!pend.length) { if (manual) toast("Todo está sincronizado ✔", "ok"); return; }
+    if (ce) { if (manual) toast(ce, "err"); return; }
+    syncing = true; $("btnSync").classList.add("busy");
     try {
-      const r = await toJpeg(file, 1600, 0.72);
-      const id = uuid();
-      F.newBlobs.set(id, r.blob);
-      F.atts.push({ id, kind: 'PHOTO', name: `foto-${dayKey(new Date())}-${id.slice(-6)}.jpg`, mime: 'image/jpeg', size: r.blob.size, width: r.width, height: r.height, caption: '', isNew: true, previewUrl: await blobToDataUrl(r.blob) });
-    } catch { toast(`No se pudo procesar ${file.name}`, 'bad'); }
+      if (c.dest === "github") await syncGithub(pend, c); else await syncFlow(pend, c);
+      const left = (await dbAll()).filter(r => r.sync !== "synced").length;
+      if (!left) toast("Sincronización completa ✔", "ok");
+      else toast(`${left} registro(s) con problemas. Revisa la pestaña Registros.`, "err");
+    } catch (e) {
+      toast(e instanceof TypeError ? "Sin conexión con el servidor. Se reintentará." : "Error al sincronizar: " + e.message, "err", 6000);
+    } finally { syncing = false; $("btnSync").classList.remove("busy"); updateBadge(); if (!$("v-list").classList.contains("hide")) renderList(); }
   }
-  F.attBusy = false; rerender('f-atts', attsSection);
-}
-function addFiles(files) {
-  if (!F) return;
-  for (const file of files) {
-    if (file.size > 20 * 1024 * 1024) { toast(`${file.name} supera los 20 MB`, 'bad'); continue; }
-    const id = uuid();
-    F.newBlobs.set(id, file);
-    F.atts.push({ id, kind: 'FILE', name: file.name, mime: file.type || 'application/octet-stream', size: file.size, caption: '', isNew: true });
-  }
-  rerender('f-atts', attsSection);
-}
-for (const [inputId, handler] of [['in-camera', addPhotos], ['in-gallery', addPhotos], ['in-file', addFiles]]) {
-  document.getElementById(inputId).addEventListener('change', (ev) => {
-    const files = [...(ev.target.files || [])]; ev.target.value = '';
-    if (files.length) handler(files);
-  });
-}
+  $("btnSync").onclick = () => syncAll(true);
 
-/* ============================================================
-   Vista: detalle de registro
-   ============================================================ */
-function viewEntry(id) {
-  const e = live('entries', id);
-  if (!e) return emptyPage('Registro no encontrado', 'Puede haber sido eliminado.');
-  const t = ETYPE[e.type] || ETYPE.GENERAL;
-  const p = byId('projects', e.project_id);
-  const folio = folios(e.project_id).get(e.id);
-  const photos = (e.attachments || []).filter((a) => a.kind === 'PHOTO');
-  const files = (e.attachments || []).filter((a) => a.kind === 'FILE');
-  const comments = all('comments').filter((c) => c.entry_id === e.id).sort((a, b) => a.created_at.localeCompare(b.created_at));
-  const editable = canEditEntry(e);
-  let details = '';
-  if (e.type === 'LABOR') {
-    details = `<section class="card"><div class="section-head"><h2>Personal</h2><span class="muted">${fmtQty(laborHours(e))} h-persona</span></div><div class="table-wrap"><table class="t"><thead><tr><th>Persona</th><th>Tarea</th><th class="r">Horas</th></tr></thead><tbody>
-      ${(e.labor || []).map((l) => `<tr><td>${esc(byId('workers', l.worker_id)?.full_name || '—')}</td><td>${esc(l.task || '')}</td><td class="r">${fmtQty(l.hours)}</td></tr>`).join('')}</tbody></table></div></section>`;
-  } else if (e.type === 'STOCK') {
-    details = `<section class="card"><h2>Movimientos</h2><div class="table-wrap"><table class="t"><thead><tr><th>Ítem</th><th>Movimiento</th><th class="r">Cantidad</th><th>Responsable</th></tr></thead><tbody>
-      ${(e.stock || []).map((l) => { const it = byId('items', l.item_id); return `<tr><td>${esc(it?.name || '—')}</td><td><span class="dir ${l.direction}">${ic(l.direction === 'IN' ? 'in' : 'out')}${l.direction === 'IN' ? 'Entrada' : 'Salida'}</span></td><td class="r">${fmtQty(l.quantity)} ${esc(it?.unit || '')}</td><td>${esc(byId('workers', l.responsible_id)?.full_name || '—')}</td></tr>`; }).join('')}</tbody></table></div></section>`;
-  } else if (e.type === 'TRANSACTION' && e.transaction) {
-    const tx = e.transaction;
-    details = `<section class="card"><span class="eyebrow" style="margin:0">${tx.kind === 'INCOME' ? 'Ingreso' : 'Egreso'}</span><div class="amount ${tx.kind === 'INCOME' ? 'in' : 'out'}">${esc(fmtMoney(tx.amount, tx.currency))}</div><h3>${esc(tx.concept)}</h3>${tx.document_number ? `<p class="muted">Documento: <span class="mono">${esc(tx.document_number)}</span></p>` : ''}</section>`;
-  }
-  return `<div class="page narrow">
-    <div class="page-head"><div><p class="eyebrow"><a href="#/proyecto/${esc(e.project_id)}">${esc(p?.name || 'Proyecto')}</a> · <span class="mono">${folioTxt(folio)}</span></p>
-      <h1>${esc(t.label)} · ${esc(fmtDayShort(e.occurred_at))}, ${fmtTime(e.occurred_at)}</h1></div>
-      ${editable ? `<div class="actions"><a class="btn" href="#/registro/${esc(e.id)}/editar">${ic('edit')}Editar</a><button class="btn danger" data-act="delete-entry" data-id="${esc(e.id)}">${ic('trash')}Eliminar</button></div>` : ''}</div>
-    <section class="card"><dl class="dl">
-      <dt>Responsable</dt><dd>${esc(nameOf(e.author_id))}</dd>
-      <dt>Fecha</dt><dd>${esc(cap(fmtDayLong(e.occurred_at)))}, ${fmtTime(e.occurred_at)}</dd>
-      ${e.supplier_id ? `<dt>Proveedor</dt><dd>${esc(byId('suppliers', e.supplier_id)?.name || '—')}</dd>` : ''}
-      <dt>Ubicación</dt><dd>${e.lat != null ? `<a class="mono" href="${mapsUrl(e.lat, e.lng)}" target="_blank" rel="noopener">${esc(fmtCoords(e.lat, e.lng))}</a>${e.accuracy_m != null ? ` <span class="muted">± ${fmtNum(e.accuracy_m)} m</span>` : ''}` : '<span class="muted">No registrada</span>'}</dd>
-      <dt>Sincronización</dt><dd>${pendPill('entries', e.id) || '<span class="muted">Enviado</span>'}</dd>
-    </dl></section>
-    ${details}
-    ${e.body ? `<section class="card"><p style="white-space:pre-wrap;overflow-wrap:anywhere">${esc(e.body)}</p></section>` : ''}
-    ${(e.tags || []).length ? `<div class="tags-line">${e.tags.map((x) => `<a href="#/buscar" data-act="search-tag" data-val="${esc(x)}">#${esc(x)}</a>`).join('  ')}</div>` : ''}
-    ${photos.length ? `<section class="section"><h2>Fotos (${photos.length})</h2><div class="photo-grid">${photos.map((a) => `<button class="photo" data-act="view-photo" data-entry="${esc(e.id)}" data-id="${esc(a.id)}"><img data-media="${esc(a.id)}" src="${esc(mediaSrc(a))}" alt="${esc(a.caption || 'Foto del registro')}" loading="lazy">${a.caption ? `<figcaption>${esc(a.caption)}</figcaption>` : ''}</button>`).join('')}</div></section>` : ''}
-    ${files.length ? `<section class="card"><h2>Archivos (${files.length})</h2><ul class="att-list">${files.map((a) => `<li class="att file"><span class="file-ic">${ic('file')}</span><div><div style="overflow-wrap:anywhere">${esc(a.name)}</div><small class="hint">${fmtBytes(a.size)}${a.local_only ? ' · solo en el dispositivo que lo adjuntó' : ''}</small></div>
-      <button class="btn sm" data-act="download-att" data-entry="${esc(e.id)}" data-id="${esc(a.id)}">${ic('download')}Descargar</button></li>`).join('')}</ul></section>` : ''}
-    <section class="card"><h2>Comentarios (${comments.length})</h2>
-      ${comments.length ? comments.map((c) => `<div class="comment"><b>${esc(nameOf(c.author_id))} <time>· ${esc(fmtDT(c.created_at))}</time></b><p style="white-space:pre-wrap;overflow-wrap:anywhere">${esc(c.body)}</p></div>`).join('') : '<p class="muted">Aún no hay comentarios.</p>'}
-      ${canWrite() ? `<form id="comment-form" class="form" style="gap:8px"><label class="field"><span class="sr">Comentario</span><textarea id="comment-body" placeholder="Escribe un comentario…" style="min-height:70px"></textarea></label><div class="form-actions"><button class="btn primary sm" type="submit">${ic('send')}Comentar</button></div></form>` : ''}
-    </section>
-    <p class="muted" style="font-size:13px">Creado ${esc(fmtDT(e.created_at))}${e.updated_at !== e.created_at ? ` · editado ${esc(fmtDT(e.updated_at))}` : ''}</p>
-  </div>`;
-}
-
-/* ============================================================
-   Vista: Buscar
-   ============================================================ */
-const SF = { text: '', types: [], project: '', author: '', tag: '', from: '', to: '' };
-function searchResults() {
-  const text = SF.text.trim().toLowerCase();
-  const from = SF.from ? parseDateOnly(SF.from) : null;
-  const to = SF.to ? new Date(parseDateOnly(SF.to).getTime() + 864e5) : null;
-  return visibleEntries().filter((e) => {
-    if (SF.types.length && !SF.types.includes(e.type)) return false;
-    if (SF.project && e.project_id !== SF.project) return false;
-    if (SF.author && e.author_id !== SF.author) return false;
-    if (SF.tag && !(e.tags || []).includes(SF.tag)) return false;
-    const d = D(e.occurred_at);
-    if (from && d < from) return false;
-    if (to && d >= to) return false;
-    if (text) {
-      const hay = [e.body, (e.tags || []).join(' '), e.transaction?.concept, byId('suppliers', e.supplier_id)?.name, entrySummary(e), projectName(e.project_id)].join(' ').toLowerCase();
-      if (!hay.includes(text)) return false;
-    }
-    return true;
-  });
-}
-function describeSearch() {
-  const parts = [];
-  if (SF.project) parts.push(`Proyecto: ${projectName(SF.project)}`);
-  if (SF.types.length) parts.push(`Tipo: ${SF.types.map((t) => ETYPE[t].label).join(', ')}`);
-  if (SF.author) parts.push(`Responsable: ${nameOf(SF.author)}`);
-  if (SF.tag) parts.push(`Etiqueta: #${SF.tag}`);
-  if (SF.from || SF.to) parts.push(`Fechas: ${SF.from ? fmtDateOnly(SF.from) : 'inicio'} a ${SF.to ? fmtDateOnly(SF.to) : 'hoy'}`);
-  if (SF.text) parts.push(`Texto: "${SF.text}"`);
-  return parts.join(' · ') || 'Todos los registros';
-}
-function viewSearch() {
-  const authors = [...new Set(all('entries').map((e) => e.author_id).filter(Boolean))];
-  view.innerHTML = `<div class="page">
-    <div class="page-head"><div><p class="eyebrow">Todos los proyectos</p><h1>Buscar en la bitácora</h1></div></div>
-    <section class="card form" style="gap:12px">
-      <label class="field"><span>Texto</span><input type="search" id="s-text" data-sf="text" value="${esc(SF.text)}" placeholder="Descripción, etiquetas, conceptos, proveedores…"></label>
-      <div class="field"><span class="lbl">Tipo</span><div class="chips">${Object.entries(ETYPE).map(([k, t]) => `<button type="button" class="chip" style="--tc:var(${t.v})" data-act="sf-type" data-val="${k}" aria-pressed="${SF.types.includes(k)}"><span class="sw"></span>${esc(t.label)}</button>`).join('')}</div></div>
-      <div class="grid-3">
-        <label class="field"><span>Proyecto</span><select id="s-project" data-sf="project"><option value="">Todos</option>${all('projects').sort((a, b) => a.name.localeCompare(b.name, 'es')).map((p) => `<option value="${esc(p.id)}" ${SF.project === p.id ? 'selected' : ''}>${esc(p.name)}</option>`).join('')}</select></label>
-        <label class="field"><span>Responsable</span><select id="s-author" data-sf="author"><option value="">Todos</option>${authors.map((a) => `<option value="${esc(a)}" ${SF.author === a ? 'selected' : ''}>${esc(nameOf(a))}</option>`).join('')}</select></label>
-        <label class="field"><span>Etiqueta</span><select id="s-tag" data-sf="tag"><option value="">Todas</option>${allTags().map((t) => `<option value="${esc(t)}" ${SF.tag === t ? 'selected' : ''}>#${esc(t)}</option>`).join('')}</select></label>
-      </div>
-      <div class="grid-2">
-        <label class="field"><span>Desde</span><input type="date" id="s-from" data-sf="from" value="${esc(SF.from)}"></label>
-        <label class="field"><span>Hasta</span><input type="date" id="s-to" data-sf="to" value="${esc(SF.to)}"></label>
-      </div>
-      <div class="form-actions" style="justify-content:space-between"><button type="button" class="btn sm ghost" data-act="sf-clear">${ic('x')}Limpiar filtros</button>
-        <div class="actions"><button class="btn sm" data-act="export-pdf" data-scope="search">${ic('file')}Exportar PDF</button><button class="btn sm" data-act="export-csv" data-scope="search">${ic('sheet')}Exportar Excel</button></div></div>
-    </section>
-    <section class="section"><div class="section-head"><h2 id="s-count"></h2></div><div id="s-results"></div></section>
-  </div>`;
-  S.partial = renderSearchResults;
-  renderSearchResults();
-}
-function renderSearchResults() {
-  const res = searchResults();
-  const c = document.getElementById('s-count'); if (c) c.textContent = `${res.length} ${res.length === 1 ? 'registro' : 'registros'}`;
-  const el = document.getElementById('s-results');
-  if (el) el.innerHTML = res.length ? timeline(res.slice(0, 300), { showProject: true }) + (res.length > 300 ? '<p class="muted">Se muestran los 300 más recientes; la exportación incluye todos.</p>' : '') : `<div class="empty">${ic('search')}<b>Sin resultados</b><span>Prueba con otros filtros.</span></div>`;
-}
-
-/* ============================================================
-   Vista: Catálogos
-   ============================================================ */
-const CAT = { kind: 'workers', q: '' };
-function viewCatalogs(q) {
-  if (CATDEF[q.tipo]) CAT.kind = q.tipo;
-  const def = CATDEF[CAT.kind];
-  view.innerHTML = `<div class="page">
-    <div class="page-head"><div><p class="eyebrow">Datos maestros</p><h1>Catálogos</h1></div>
-      ${canWrite() ? `<div class="actions"><button class="btn primary" data-act="cat-edit">${ic('plus')}Agregar ${def.single}</button></div>` : ''}</div>
-    <div class="chips" role="tablist">${Object.entries(CATDEF).map(([k, d]) => `<a class="chip ${k === CAT.kind ? 'on' : ''}" role="tab" aria-selected="${k === CAT.kind}" href="#/catalogos?tipo=${k}">${ic(d.icon)}${esc(d.label)} <span class="${k === CAT.kind ? '' : 'muted'}">${all(k).length}</span></a>`).join('')}</div>
-    <label class="field"><span class="sr">Buscar</span><input type="search" id="cat-q" data-cat="q" value="${esc(CAT.q)}" placeholder="Buscar en ${esc(def.label.toLowerCase())}…"></label>
-    <div id="cat-list"></div>
-    <p class="muted" style="font-size:13px">También puedes agregar elementos directamente desde el formulario de registro.</p>
-  </div>`;
-  S.partial = renderCatList;
-  renderCatList();
-}
-function renderCatList() {
-  const def = CATDEF[CAT.kind];
-  const q = CAT.q.trim().toLowerCase();
-  const rows = all(CAT.kind).filter((r) => !q || [def.title(r), ...def.sub(r)].join(' ').toLowerCase().includes(q)).sort((a, b) => def.title(a).localeCompare(def.title(b), 'es'));
-  const el = document.getElementById('cat-list');
-  if (!el) return;
-  el.innerHTML = rows.length ? `<div class="card" style="padding:0"><div class="table-wrap"><table class="t"><tbody>${rows.map((r) => `<tr>
-    <td style="padding:10px 14px"><b>${esc(def.title(r))}</b><div class="muted" style="font-size:13px">${esc(def.sub(r).filter(Boolean).join(' · '))}</div></td>
-    <td class="r" style="padding:10px 14px">${pendPill(CAT.kind, r.id)} ${canWrite() ? `<button class="btn sm ghost" data-act="cat-edit" data-id="${esc(r.id)}">${ic('edit')}Editar</button>` : ''}</td></tr>`).join('')}</tbody></table></div></div>`
-    : `<div class="empty">${ic(def.icon)}<b>Sin ${esc(def.label.toLowerCase())}</b></div>`;
-}
-async function editCatalog(id) {
-  const kind = CAT.kind; const def = CATDEF[kind];
-  const rec = id ? byId(kind, id) : null;
-  const result = await showDialog(`<form class="dlg-body" id="cat-form"><h2>${rec ? 'Editar' : 'Agregar'} ${esc(def.single)}</h2>
-    ${def.fields.map((f) => `<label class="field"><span>${esc(f.l)}${f.req ? ' *' : ''}</span><input id="c-${f.k}" value="${esc(rec?.[f.k] ?? (f.k === 'unit' ? 'un' : ''))}" placeholder="${esc(f.ph || '')}"></label>`).join('')}
-    ${kind === 'items' ? `<label class="field"><span>Categoría</span><select id="c-category">${Object.entries(ICAT).map(([k, v]) => `<option value="${k}" ${(rec?.category || 'MATERIAL') === k ? 'selected' : ''}>${esc(v)}</option>`).join('')}</select></label>` : ''}
-    <div class="dlg-actions">${rec && canDeleteCatalog() ? `<button type="button" class="btn danger" data-v="delete">${ic('trash')}Eliminar</button><span class="spacer"></span>` : ''}
-      <button type="button" class="btn ghost" data-v="cancel">Cancelar</button><button class="btn primary" type="submit">Guardar</button></div></form>`,
-  (d, done) => {
-    d.querySelectorAll('[data-v]').forEach((b) => { b.onclick = () => done(b.dataset.v); });
-    d.querySelector('form').onsubmit = (ev) => {
-      ev.preventDefault();
-      const vals = {};
-      for (const f of def.fields) vals[f.k] = d.querySelector(`#c-${f.k}`).value.trim() || null;
-      const missing = def.fields.find((f) => f.req && !vals[f.k]);
-      if (missing) { toast(`Completa «${missing.l}».`, 'bad'); return; }
-      if (kind === 'items') vals.category = d.querySelector('#c-category').value;
-      done({ vals });
-    };
-    setTimeout(() => d.querySelector('input')?.focus(), 30);
-  });
-  if (result === 'delete') {
-    if (await confirmBox({ title: `Eliminar ${def.single}`, message: 'Los registros existentes conservarán la referencia.', ok: 'Eliminar', danger: true })) { await softDelete(kind, rec); toast('Eliminado'); }
-  } else if (result?.vals) {
-    await save(kind, { ...(rec || {}), id: rec?.id || uuid(), ...result.vals });
-    toast('Guardado');
-  }
-}
-
-/* ============================================================
-   Vista: Equipo, perfil y sincronización
-   ============================================================ */
-function viewTeam() {
-  const c = pendingCounts();
-  const role = myRole();
-  const members = all('members').sort((a, b) => nameOf(a.id).localeCompare(nameOf(b.id), 'es'));
-  const avatar = (id) => (S.avatars[id] ? `<img src="${esc(S.avatars[id])}" alt="" style="width:40px;height:40px;border-radius:50%">` : `<span style="width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--primary);color:var(--primary-ink);font-weight:700">${esc(nameOf(id).split(/\s+/).map((x) => x[0] || '').slice(0, 2).join('').toUpperCase())}</span>`);
-  const modeText = S.mode === 'cloud'
-    ? 'Los registros se guardan en la base compartida de esta bitácora en claude.ai y los ve todo tu equipo. Sin señal, quedan en este dispositivo y se envían al volver la conexión.'
-    : 'Esta copia no está conectada a la nube: los datos viven solo en este navegador. Descarga respaldos con frecuencia.';
-  return `<div class="page narrow">
-    <div class="page-head"><div><p class="eyebrow">Cuenta y datos</p><h1>Equipo</h1></div></div>
-    <section class="card"><div style="display:flex;gap:12px;align-items:center">${avatar(S.me.id)}<div><h3>${esc(nameOf(S.me.id))}</h3><span class="pill role">${esc(ROLE[role])}</span></div></div>
-      ${S.mode === 'local' ? `<div class="actions"><button class="btn sm" data-act="local-add">${ic('plus')}Agregar usuario</button>${all('members').filter((m) => m.name && m.id !== S.me.id).map((m) => `<button class="btn sm ghost" data-act="switch-user" data-id="${esc(m.id)}">${ic('swap')}Cambiar a ${esc(m.name)}</button>`).join('')}</div>` : ''}</section>
-    <section class="card">
-      <div class="section-head"><h2>Sincronización</h2>${S.mode === 'cloud' && S.canWrite ? `<button class="btn sm" data-act="sync-now">${ic('cloud')}Sincronizar ahora</button>` : ''}</div>
-      <p>${esc(modeText)}</p>
-      <dl class="dl"><dt>Registros pendientes</dt><dd class="num">${c.entries}</dd><dt>Fotos y archivos por subir</dt><dd class="num">${c.media}</dd><dt>Proyectos pendientes</dt><dd class="num">${c.projects}</dd><dt>Comentarios pendientes</dt><dd class="num">${c.comments}</dd><dt>Catálogos pendientes</dt><dd class="num">${c.catalogs}</dd></dl>
-      <div class="actions"><button class="btn sm" data-act="backup">${ic('download')}Descargar respaldo (JSON)</button></div>
-    </section>
-    ${S.mode === 'cloud' ? `<section class="card"><h2>Integrantes</h2>
-      <p class="muted" style="font-size:13.5px">Cada persona aparece aquí al abrir la bitácora por primera vez. ${canManageTeam() ? 'Como administrador, asigna los roles.' : 'Solo un administrador cambia roles.'}</p>
-      <div class="table-wrap"><table class="t"><tbody>${members.map((m) => `<tr><td style="display:flex;gap:10px;align-items:center">${avatar(m.id)}<span>${esc(nameOf(m.id))}${m.id === S.me.id ? ' <span class="muted">(tú)</span>' : ''}</span></td>
-        <td class="r">${canManageTeam() ? `<select id="role-${esc(m.id)}" data-act-change="set-role" data-id="${esc(m.id)}" aria-label="Rol de ${esc(nameOf(m.id))}" style="width:auto">${Object.entries(ROLE).map(([k, v]) => `<option value="${k}" ${m.role === k ? 'selected' : ''}>${esc(v)}</option>`).join('')}</select>` : `<span class="pill role">${esc(ROLE[m.role] || m.role)}</span>`}</td></tr>`).join('')}</tbody></table></div>
-      <p class="muted" style="font-size:13px">Para sumar a alguien, compártele esta página desde el menú «Compartir» de claude.ai con permiso para interactuar. Para que suba fotos en tamaño completo necesita permiso de edición; sin él, las fotos se guardan en versión reducida.</p></section>` : ''}
-    <section class="card"><h2>Permisos por rol</h2><div class="table-wrap"><table class="t"><thead><tr><th>Rol</th><th>Proyectos</th><th>Registros</th></tr></thead><tbody>
-      <tr><td>Administrador</td><td>Todos; asigna roles</td><td>Crea, edita y elimina cualquiera</td></tr>
-      <tr><td>Supervisor</td><td>Crea y edita</td><td>Crea, edita y comenta cualquiera</td></tr>
-      <tr><td>Operador de campo</td><td>Crea; edita los propios</td><td>Crea; edita los propios durante ${EDIT_WINDOW_H} h</td></tr></tbody></table></div>
-      <p class="muted" style="font-size:13px">Capacidad de esta versión piloto: hasta 5.000 documentos en total (registros, proyectos, catálogos y comentarios).</p></section>
-  </div>`;
-}
-
-/* ============================================================
-   Exportación: Excel (CSV) y PDF
-   ============================================================ */
-async function saveFile(filename, data, mime) {
-  if (S.downloads) {
-    try { await S.downloads.save({ filename, data }); toast('Archivo listo'); return; }
-    catch (e) {
-      if (e?.code === 'declined') return;
-      if (!['unavailable', 'not_granted', 'capability_disabled', 'capability_removed'].includes(e?.code)) { toast(`No se pudo guardar el archivo (${e?.code || 'error'}).`, 'bad'); return; }
-    }
-  }
-  const blob = data instanceof Blob ? data : new Blob([data], { type: mime });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 5000);
-}
-function exportScope(el) {
-  if (el.dataset.scope === 'project') {
-    const p = byId('projects', el.dataset.id);
-    return { entries: visibleEntries().filter((e) => e.project_id === p.id), title: p.name, subtitle: [p.code, p.client_name].filter(Boolean).join(' · '), project: p };
-  }
-  return { entries: searchResults(), title: 'Bitácora de campo', subtitle: describeSearch(), project: null };
-}
-function csvCell(v) {
-  if (v === null || v === undefined) return '';
-  const s = typeof v === 'number' ? String(v).replace('.', ',') : String(v);
-  return /[;"\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
-}
-async function exportCsv(scope) {
-  if (!scope.entries.length) { toast('No hay registros para exportar.', 'bad'); return; }
-  const header = ['Folio', 'Fecha', 'Hora', 'Proyecto', 'Tipo', 'Responsable', 'Descripción', 'Etiquetas', 'Proveedor', 'Detalle', 'Horas', 'Movimiento', 'Monto', 'Moneda', 'Concepto', 'N° documento', 'Latitud', 'Longitud', 'Fotos', 'Archivos'];
-  const fol = {};
-  const rows = scope.entries.map((e) => {
-    fol[e.project_id] ||= folios(e.project_id);
-    const detail = e.type === 'LABOR' ? (e.labor || []).map((l) => `${byId('workers', l.worker_id)?.full_name || '—'}${l.task ? ': ' + l.task : ''} (${fmtQty(l.hours)} h)`).join(' | ')
-      : e.type === 'STOCK' ? (e.stock || []).map((l) => `${byId('items', l.item_id)?.name || '—'}: ${l.direction === 'IN' ? 'entrada' : 'salida'} ${fmtQty(l.quantity)} ${byId('items', l.item_id)?.unit || ''}`).join(' | ') : '';
-    const tx = e.transaction;
-    return [folioTxt(fol[e.project_id].get(e.id)), fmtDate(e.occurred_at), fmtTime(e.occurred_at), projectName(e.project_id), ETYPE[e.type].label, nameOf(e.author_id), e.body, (e.tags || []).join(', '),
-      byId('suppliers', e.supplier_id)?.name, detail, e.type === 'LABOR' ? laborHours(e) : null, tx ? (tx.kind === 'INCOME' ? 'Ingreso' : 'Egreso') : null, tx?.amount ?? null, tx?.currency, tx?.concept, tx?.document_number,
-      e.lat, e.lng, (e.attachments || []).filter((a) => a.kind === 'PHOTO').length, (e.attachments || []).filter((a) => a.kind === 'FILE').length];
-  });
-  const csv = '﻿' + [header, ...rows].map((r) => r.map(csvCell).join(';')).join('\r\n');
-  await saveFile(`bitacora-${dayKey(new Date())}.csv`, csv, 'text/csv');
-}
-function loadScript(src) {
-  if (document.querySelector(`script[src="${src}"]`) && (window.jspdf)) return Promise.resolve();
-  return new Promise((res, rej) => { const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = () => rej(new Error('sin conexión')); document.head.appendChild(s); });
-}
-async function exportPdf(scope) {
-  if (!scope.entries.length) { toast('No hay registros para exportar.', 'bad'); return; }
-  toast('Generando PDF…');
-  try {
-    if (!window.jspdf) await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
-    if (!window.jspdf?.jsPDF?.API?.autoTable) await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js');
-  } catch { toast('El PDF necesita conexión para cargar el generador. Prueba con Excel.', 'bad'); return; }
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
-  const W = 210, M = 14, BOTTOM = 283; let y = M;
-  const NAVY = [27, 63, 99], INK = [20, 33, 43], MUTED = [94, 109, 121], AMBER = [232, 163, 23];
-  const ensure = (h) => { if (y + h > BOTTOM) { doc.addPage(); y = M; } };
-  const text = (str, size, color, style = 'normal', indent = 0) => {
-    doc.setFont('helvetica', style); doc.setFontSize(size); doc.setTextColor(...color);
-    const lines = doc.splitTextToSize(String(str), W - 2 * M - indent);
-    const lh = size * 0.42;
-    for (const ln of lines) { ensure(lh + 1); doc.text(ln, M + indent, y + lh); y += lh + 0.6; }
+  $("btnTest").onclick = async () => {
+    const c = readCfgForm();
+    if (!navigator.onLine) return toast("Sin conexión.", "err");
+    if (c.dest === "flow") return toast(/^https:\/\//.test(c.flowUrl) ? "URL con formato válido. La prueba real es sincronizar un registro." : "La URL del flujo no es válida.", /^https:\/\//.test(c.flowUrl) ? "" : "err");
+    if (!c.owner || !c.repo || !c.token) return toast("Completa owner, repositorio y token.", "err");
+    try {
+      const r = await (await gh(c, repoBase(c))).json();
+      toast(`Repositorio ${r.full_name} (${r.private ? "privado" : "PÚBLICO"})` + (r.permissions && r.permissions.push === false ? "\n⚠ El token no puede escribir." : "\nEscritura correcta ✔")
+        + (r.private ? "" : "\n⚠ Un repo público expone tus datos."), r.permissions && r.permissions.push === false ? "err" : "ok", 6000);
+    } catch (e) { toast(e instanceof TypeError ? "Sin conexión." : e.message, "err"); }
   };
-  const table = (head, body, widths) => {
-    doc.autoTable({ startY: y, head: [head], body, margin: { left: M, right: M }, theme: 'grid',
-      styles: { fontSize: 8.5, cellPadding: 1.4, textColor: INK, lineColor: [211, 218, 224] }, headStyles: { fillColor: [224, 233, 242], textColor: INK, fontStyle: 'bold' },
-      columnStyles: widths || {} });
-    y = doc.lastAutoTable.finalY + 2;
+
+  /* ---------- estado, respaldo, instalación ---------- */
+  async function updateBadge() {
+    const all = await dbAll(), n = all.filter(r => r.sync !== "synced").length;
+    $("pendN").textContent = n;
+    let info = `${all.length} registro(s) en el teléfono, ${n} pendiente(s).`;
+    try { const e = await navigator.storage.estimate(); info += ` Espacio usado: ${(e.usage / 1048576).toFixed(1)} MB.`; } catch {}
+    $("storeInfo").textContent = info;
+  }
+  function updateNet() { const on = navigator.onLine; $("net").textContent = on ? "En línea" : "Sin conexión"; $("net").classList.toggle("off", !on); }
+  window.addEventListener("online", () => { updateNet(); if (getCfg().auto) syncAll(false); });
+  window.addEventListener("offline", updateNet);
+  document.addEventListener("visibilitychange", () => { if (!document.hidden && getCfg().auto) syncAll(false); });
+  setInterval(() => { if (getCfg().auto && navigator.onLine) syncAll(false); }, 60000);
+
+  $("btnExport").onclick = async () => {
+    const all = (await dbAll()).map(({ imagen, ...r }) => ({ ...r, tieneImagen: !!imagen }));
+    const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([JSON.stringify(all, null, 2)], { type: "application/json" }));
+    a.download = `respaldo-registros-${today()}.json`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
   };
-  text(scope.title, 17, NAVY, 'bold');
-  if (scope.subtitle) text(scope.subtitle, 9.5, MUTED);
-  text(`Generado el ${fmtDT(new Date())} por ${nameOf(S.me.id)} · ${scope.entries.length} registros`, 9, MUTED);
-  y += 2;
-  if (scope.project) {
-    const sm = projectSummary(scope.project.id);
-    text('Resumen', 12, NAVY, 'bold');
-    table(['Indicador', 'Valor'], [['Registros', String(sm.total)], ['Horas-persona', `${fmtQty(sm.hours)} h`],
-      ...sm.money.map((m) => [`${m.kind === 'INCOME' ? 'Ingresos' : 'Egresos'} (${m.currency})`, fmtMoney(m.total, m.currency)])], { 1: { halign: 'right' } });
-    if (sm.workers.length) table(['Persona', 'Horas'], sm.workers.map((w) => [w.name, `${fmtQty(w.hours)} h`]), { 1: { halign: 'right' } });
-    if (sm.stock.length) table(['Ítem', 'Entradas', 'Salidas', 'Saldo'], sm.stock.map((s) => [s.name, `${fmtQty(s.in)} ${s.unit}`, `${fmtQty(s.out)} ${s.unit}`, `${fmtQty(s.in - s.out)} ${s.unit}`]), { 1: { halign: 'right' }, 2: { halign: 'right' }, 3: { halign: 'right' } });
-  }
-  const sorted = [...scope.entries].sort((a, b) => a.occurred_at.localeCompare(b.occurred_at));
-  const fol = {};
-  let budget = 40, omitted = 0, day = '';
-  for (const e of sorted) {
-    fol[e.project_id] ||= folios(e.project_id);
-    const k = dayKey(e.occurred_at);
-    if (k !== day) {
-      day = k; ensure(16); y += 3;
-      doc.setFont('helvetica', 'bold'); doc.setFontSize(11.5); doc.setTextColor(...NAVY); doc.text(cap(fmtDayLong(e.occurred_at)), M, y + 4.5);
-      doc.setDrawColor(...AMBER); doc.setLineWidth(0.7); doc.line(M, y + 6.5, W - M, y + 6.5); y += 9;
-    }
-    ensure(14); y += 1;
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(9.5); doc.setTextColor(...INK);
-    doc.text(`${fmtTime(e.occurred_at)}  ${ETYPE[e.type].label.toUpperCase()}  ·  ${nameOf(e.author_id)}${scope.project ? '' : `  ·  ${projectName(e.project_id)}`}`, M, y + 4);
-    doc.setFont('helvetica', 'normal'); doc.setTextColor(...MUTED); doc.text(folioTxt(fol[e.project_id].get(e.id)), W - M, y + 4, { align: 'right' });
-    y += 6;
-    if (e.type === 'LABOR' && e.labor?.length) table(['Persona', 'Tarea', 'Horas'], e.labor.map((l) => [byId('workers', l.worker_id)?.full_name || '—', l.task || '', fmtQty(l.hours)]), { 2: { halign: 'right', cellWidth: 18 } });
-    if (e.type === 'STOCK' && e.stock?.length) table(['Ítem', 'Movimiento', 'Cantidad', 'Responsable'], e.stock.map((l) => [byId('items', l.item_id)?.name || '—', l.direction === 'IN' ? 'Entrada' : 'Salida', `${fmtQty(l.quantity)} ${byId('items', l.item_id)?.unit || ''}`, byId('workers', l.responsible_id)?.full_name || '—']), { 2: { halign: 'right' } });
-    if (e.transaction) text(`${e.transaction.kind === 'INCOME' ? 'Ingreso' : 'Egreso'}: ${fmtMoney(e.transaction.amount, e.transaction.currency)} — ${e.transaction.concept}${e.transaction.document_number ? ` (doc. ${e.transaction.document_number})` : ''}`, 9.5, INK, 'bold');
-    if (e.body) text(e.body, 9.5, INK);
-    const meta = [byId('suppliers', e.supplier_id) && `Proveedor: ${byId('suppliers', e.supplier_id).name}`, (e.tags || []).length && e.tags.map((t) => '#' + t).join(' '),
-      e.lat != null ? `Ubicación: ${fmtCoords(e.lat, e.lng)}${e.accuracy_m != null ? ` (± ${fmtNum(e.accuracy_m)} m)` : ''}` : 'Sin ubicación'].filter(Boolean).join('  ·  ');
-    text(meta, 8.5, MUTED);
-    const photos = (e.attachments || []).filter((a) => a.kind === 'PHOTO');
-    const shown = [];
-    for (const a of photos.slice(0, 2)) {
-      if (budget <= 0) break;
-      try { const url = await mediaDataUrl(a); shown.push({ a, url }); budget--; } catch { /* se omite */ }
-    }
-    omitted += photos.length - shown.length;
-    if (shown.length) {
-      const pw = (W - 2 * M - 6) / 2;
-      const hs = shown.map(({ a }) => Math.min(62, pw * ((a.height || 3) / (a.width || 4))));
-      const ph = Math.max(...hs);
-      ensure(ph + 10);
-      shown.forEach(({ a, url }, i) => {
-        const x = M + i * (pw + 6);
-        try { doc.addImage(url, 'JPEG', x, y + 1, pw, hs[i]); } catch { /* formato no soportado */ }
-        if (a.caption) { doc.setFontSize(8); doc.setTextColor(...MUTED); doc.text(doc.splitTextToSize(a.caption, pw).slice(0, 2), x, y + hs[i] + 4.5); }
-      });
-      y += ph + (shown.some(({ a }) => a.caption) ? 10 : 3);
-    }
-    const files = (e.attachments || []).filter((a) => a.kind === 'FILE');
-    if (files.length) text(`Adjuntos: ${files.map((f) => f.name).join(', ')}`, 8.5, MUTED);
-    for (const c of all('comments').filter((x) => x.entry_id === e.id).sort((a, b) => a.created_at.localeCompare(b.created_at))) text(`${nameOf(c.author_id)} (${fmtDT(c.created_at)}): ${c.body}`, 8.5, INK, 'italic', 4);
-    y += 1.5; ensure(2); doc.setDrawColor(228, 233, 237); doc.setLineWidth(0.3); doc.line(M, y, W - M, y); y += 1;
-  }
-  if (omitted) { y += 2; text(`${omitted} fotos no se incluyeron para mantener un tamaño manejable; están disponibles en la bitácora.`, 8.5, MUTED, 'italic'); }
-  const pages = doc.getNumberOfPages();
-  for (let i = 1; i <= pages; i++) {
-    doc.setPage(i); doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(...MUTED);
-    doc.text('Bitácora de Campo', M, 292); doc.text(`${i} / ${pages}`, W - M, 292, { align: 'right' });
-  }
-  await saveFile(`bitacora-${dayKey(new Date())}.pdf`, doc.output('blob'), 'application/pdf');
-}
+  $("btnClean").onclick = async () => {
+    const done = (await dbAll()).filter(r => r.sync === "synced");
+    if (!done.length) return toast("No hay registros sincronizados que borrar.");
+    if (!confirm(`Se borrarán ${done.length} registro(s) ya sincronizados del teléfono (el destino no se toca). ¿Continuar?`)) return;
+    for (const r of done) await dbDel(r.id);
+    updateBadge(); toast("Espacio liberado ✔", "ok");
+  };
+  window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); deferredInstall = e; $("btnInstall").classList.remove("hide"); $("installHelp").classList.add("hide"); });
+  $("btnInstall").onclick = async () => { if (deferredInstall) { deferredInstall.prompt(); deferredInstall = null; $("btnInstall").classList.add("hide"); } };
 
-/* ============================================================
-   Eventos
-   ============================================================ */
-const ACT = {
-  'go-team': () => { location.hash = '#/equipo'; },
-  seg: (el) => { el.parentElement.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === el))); },
-  'switch-user': async (el) => { S.me = { id: el.dataset.id }; await Local.put('meta', 'currentUser', el.dataset.id); S.formActive = false; render(); toast(`Registrando como ${nameOf(el.dataset.id)}`); },
-  'local-add': async () => {
-    const name = await promptBox({ title: 'Agregar usuario', label: 'Nombre completo', ok: 'Agregar' });
-    if (!name) return;
-    await save('members', { id: uuid(), name, role: 'OPERATOR', local: true });
-    toast('Usuario agregado como operador de campo');
-  },
-  'sync-now': () => { S.retryMs = 2000; queueFlush(0); toast('Sincronizando…'); },
-  backup: async () => {
-    const data = Object.fromEntries(COLS.map((c) => [c, [...S.data[c].values()]]));
-    await saveFile(`bitacora-respaldo-${dayKey(new Date())}.json`, JSON.stringify({ exported_at: nowIso(), ...data }, null, 1), 'application/json');
-  },
-  'delete-project': async (el) => {
-    const p = byId('projects', el.dataset.id);
-    if (!p || !(await confirmBox({ title: 'Eliminar proyecto', message: `«${p.name}» y sus registros dejarán de mostrarse.`, ok: 'Eliminar', danger: true }))) return;
-    await softDelete('projects', p); S.formActive = false; toast('Proyecto eliminado'); location.hash = '#/proyectos';
-  },
-  'delete-entry': async (el) => {
-    const e = byId('entries', el.dataset.id);
-    if (!e || !(await confirmBox({ title: 'Eliminar registro', message: 'El registro dejará de mostrarse en la bitácora.', ok: 'Eliminar', danger: true }))) return;
-    await softDelete('entries', e);
-    for (const a of e.attachments || []) Local.del('blobs', a.id);
-    toast('Registro eliminado'); location.hash = `#/proyecto/${e.project_id}`;
-  },
-  'view-photo': (el) => {
-    const e = byId('entries', el.dataset.entry); const a = e?.attachments?.find((x) => x.id === el.dataset.id);
-    if (!a) return;
-    showDialog(`<button class="icon-btn close" data-v="x" aria-label="Cerrar">${ic('x')}</button><img data-media="${esc(a.id)}" src="${esc(mediaSrc(a))}" alt="${esc(a.caption || 'Foto')}">${a.caption ? `<div class="cap">${esc(a.caption)}</div>` : ''}`,
-      (d, done) => { d.querySelector('[data-v]').onclick = () => done(); d.onclick = (ev) => { if (ev.target === d) done(); }; }, 'viewer');
-  },
-  'download-att': async (el) => {
-    const e = byId('entries', el.dataset.entry); const a = e?.attachments?.find((x) => x.id === el.dataset.id);
-    if (!a) return;
-    try { await saveFile(a.name, await mediaBlob(a), a.mime); } catch (err) { toast(err.message || 'No disponible', 'bad'); }
-  },
-  'search-tag': (el, ev) => { ev.preventDefault(); Object.assign(SF, { text: '', types: [], project: '', author: '', tag: el.dataset.val, from: '', to: '' }); location.hash = '#/buscar'; },
-  'sf-type': (el) => { const t = el.dataset.val; SF.types = SF.types.includes(t) ? SF.types.filter((x) => x !== t) : [...SF.types, t]; el.setAttribute('aria-pressed', String(SF.types.includes(t))); renderSearchResults(); },
-  'sf-clear': () => { Object.assign(SF, { text: '', types: [], project: '', author: '', tag: '', from: '', to: '' }); viewSearch(); },
-  'export-pdf': (el) => exportPdf(exportScope(el)),
-  'export-csv': (el) => exportCsv(exportScope(el)),
-  'cat-edit': (el) => editCatalog(el.dataset.id),
-  gps: (el) => captureGps(el.dataset.ns),
-  'manual-loc': (el) => manualLoc(el.dataset.ns),
-  'clear-loc': (el) => setLoc(el.dataset.ns, null),
-  pick: (el) => document.getElementById(el.dataset.input).click(),
-  'f-type': (el) => {
-    F.type = el.dataset.val;
-    document.querySelectorAll('#f-types button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.val === F.type)));
-    rerender('f-typed', typedSection);
-    document.getElementById('f-body-label').textContent = F.type === 'GENERAL' ? 'Descripción' : 'Observaciones';
-  },
-  'f-add-line': (el) => {
-    const list = el.dataset.list; const line = list === 'labor' ? blankLabor() : blankStock();
-    F[list].push(line); rerender('f-typed', typedSection);
-    document.getElementById(`${list === 'labor' ? 'lw' : 'si'}-${line.id}`)?.focus();
-  },
-  'f-del-line': (el) => { const list = el.dataset.list; F[list] = F[list].filter((l) => l.id !== el.dataset.id); rerender('f-typed', typedSection); },
-  'f-dir': (el) => { const l = F.stock.find((x) => x.id === el.dataset.id); if (l) l.direction = el.dataset.val; ACT.seg(el); },
-  'f-kind': (el) => { F.tx.kind = el.dataset.val; ACT.seg(el); },
-  'f-cur': (el) => { F.tx.currency = el.dataset.val; ACT.seg(el); },
-  'f-tag-add': (el) => { const t = normTag(el.dataset.val); if (t && !F.tags.includes(t)) F.tags.push(t); rerender('f-tags', tagsSection); document.getElementById('f-tag-input')?.focus(); },
-  'f-tag-del': (el) => { F.tags = F.tags.filter((t) => t !== el.dataset.val); rerender('f-tags', tagsSection); },
-  'f-att-del': (el) => { F.atts = F.atts.filter((a) => a.id !== el.dataset.id); F.newBlobs.delete(el.dataset.id); rerender('f-atts', attsSection); },
-};
-document.addEventListener('click', (ev) => {
-  const el = ev.target.closest('[data-act]');
-  if (!el || el.tagName === 'SELECT') return;
-  const fn = ACT[el.dataset.act];
-  if (!fn) return;
-  if (el.tagName === 'BUTTON' && el.type !== 'submit') ev.preventDefault();
-  fn(el, ev);
-});
-document.addEventListener('submit', async (ev) => {
-  if (ev.target.id !== 'comment-form') return;
-  ev.preventDefault();
-  const ta = document.getElementById('comment-body'); const body = ta.value.trim();
-  const id = parseRoute().parts[1];
-  if (!body || !id) return;
-  ta.value = '';
-  await save('comments', { id: uuid(), entry_id: id, author_id: S.me.id, body });
-  toast('Comentario agregado');
-});
-let searchTimer = null;
-document.addEventListener('input', (ev) => {
-  const el = ev.target;
-  if (el.dataset.f && F) { if (el.value !== '__new__') setF(el.dataset.f, el.value); return; }
-  if (el.id === 'f-tag-input' && F) {
-    if (/[,;]$/.test(el.value)) { const t = normTag(el.value.slice(0, -1)); el.value = ''; if (t && !F.tags.includes(t)) F.tags.push(t); rerender('f-tags', tagsSection); document.getElementById('f-tag-input')?.focus(); return; }
-    rerender('f-tag-sugg', () => { const q = normTag(el.value); return allTags().filter((t) => !F.tags.includes(t) && (!q || t.startsWith(q))).slice(0, 8).map((t) => `<button type="button" class="tag sugg" data-act="f-tag-add" data-val="${esc(t)}">+ #${esc(t)}</button>`).join(''); });
-    return;
+  /* ---------- navegación ---------- */
+  function show(v) {
+    document.querySelectorAll(".view").forEach(s => s.classList.toggle("hide", s.id !== "v-" + v));
+    document.querySelectorAll("nav button").forEach(b => b.classList.toggle("on", b.dataset.v === v));
+    if (v === "list") renderList(); if (v === "cfg") updateBadge(); window.scrollTo(0, 0);
   }
-  if (el.dataset.sf) { SF[el.dataset.sf] = el.value; clearTimeout(searchTimer); searchTimer = setTimeout(renderSearchResults, el.type === 'search' ? 200 : 0); return; }
-  if (el.dataset.cat) { CAT.q = el.value; renderCatList(); }
-});
-document.addEventListener('change', async (ev) => {
-  const el = ev.target;
-  if (el.tagName === 'SELECT' && el.value === '__new__' && F) { await handleNewOption(el); return; }
-  if (el.dataset.f && F) { setF(el.dataset.f, el.value); if (el.dataset.f.endsWith('.item_id')) rerender('f-typed', typedSection); return; }
-  if (el.dataset.sf) { SF[el.dataset.sf] = el.value; renderSearchResults(); return; }
-  if (el.dataset.actChange === 'set-role') {
-    const m = byId('members', el.dataset.id);
-    if (m) { await save('members', { ...m, role: el.value }); toast(`Rol actualizado: ${ROLE[el.value]}`); }
-  }
-});
-document.addEventListener('keydown', (ev) => {
-  if (ev.target.id === 'f-tag-input' && ev.key === 'Enter') {
-    ev.preventDefault();
-    const t = normTag(ev.target.value);
-    if (t && !F.tags.includes(t)) F.tags.push(t);
-    rerender('f-tags', tagsSection); document.getElementById('f-tag-input')?.focus();
-  }
-});
+  document.querySelectorAll("nav button").forEach(b => b.onclick = () => show(b.dataset.v));
 
-/* ============================================================
-   Arranque
-   ============================================================ */
-async function boot() {
-  await Local.open();
-  const recs = (await Local.all('records')) || [];
-  for (const r of recs) {
-    if (!S.data[r.col]) continue;
-    S.data[r.col].set(r.id, r.data);
-    if (r.pending) S.pending.add(keyOf(r.col, r.id));
-  }
-  let cloud = false;
-  try { cloud = await initCloud(); } catch (e) { console.warn('Nube no disponible', e); }
-  if (!cloud) {
-    S.mode = 'local';
-    const cur = await Local.get('meta', 'currentUser');
-    if (cur && S.data.members.get(cur)) S.me = { id: cur };
-  } else queueFlush(500);
-  render();
-  updateSync();
-}
-boot();
+  /* ---------- inicio ---------- */
+  applyCfgForm(); updateNet(); $("f_fecha").value = today(); updateBadge();
+  if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+  if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
+  if (getCfg().auto) syncAll(false);
 })();
 </script>
-
+</body>
+</html>
